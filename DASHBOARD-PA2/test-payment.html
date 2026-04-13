@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Payment - Midtrans</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: bold;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #764ba2;
+        }
+        .info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f0f0;
+            border-radius: 5px;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+        .info strong {
+            display: block;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>💳 Test Pembayaran Midtrans</h1>
+        
+        <div class="form-group">
+            <label>Snap Token:</label>
+            <input type="text" id="snapToken" placeholder="Paste snap token dari API" value="c865fdd2-a9cc-4c46-b20e-be3cd590fe47">
+        </div>
+        
+        <div class="form-group">
+            <label>Nominal:</label>
+            <input type="text" value="Rp 200.000" readonly>
+        </div>
+
+        <button onclick="payNow()">💳 Bayar Sekarang</button>
+        
+        <div class="info">
+            <strong>📋 Cara Pakai:</strong>
+            1. Copy snap token dari API `/api/pembayaran/create`<br>
+            2. Paste di field Snap Token<br>
+            3. Klik "Bayar Sekarang"<br>
+            4. Pilih metode pembayaran (Transfer Bank, E-wallet, dll)<br>
+            <br>
+            <strong>🧪 Test Kartu Kredit:</strong><br>
+            Nomor: 4811 1111 1111 1114<br>
+            Exp: 12/26<br>
+            CVV: 123<br>
+            OTP: 123456
+        </div>
+    </div>
+
+    <script src="https://app.sandbox.midtrans.com/snap/snap.js" 
+            data-client-key="Mid-client-izZUiPYYz6doD84k"></script>
+    <script>
+        function payNow(){
+            var snapToken = document.getElementById('snapToken').value;
+            
+            if (!snapToken) {
+                alert('❌ Masukkan snap token terlebih dahulu!');
+                return;
+            }
+            
+            snap.pay(snapToken, {
+                onSuccess: function(result){
+                    alert('✅ Pembayaran Berhasil!');
+                    console.log('Success:', result);
+                },
+                onPending: function(result){
+                    alert('⏳ Pembayaran Pending - Tunggu konfirmasi');
+                    console.log('Pending:', result);
+                },
+                onError: function(result){
+                    alert('❌ Pembayaran Gagal');
+                    console.log('Error:', result);
+                },
+                onClose: function(){
+                    alert('Jendela pembayaran ditutup');
+                }
+            });
+        }
+        
+        // Allow Enter key to trigger payment
+        document.getElementById('snapToken').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') payNow();
+        });
+    </script>
+</body>
+</html>
