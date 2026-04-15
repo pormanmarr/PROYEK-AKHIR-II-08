@@ -1,0 +1,170 @@
+### Environment Variables
+@baseUrl = http://localhost:8081/api/admin
+@contentType = application/json
+
+### =====================
+### DASHBOARD ENDPOINTS
+### =====================
+
+### GET Dashboard Metrics
+GET {{baseUrl}}/dashboard/metrics
+
+### GET Dashboard Statistics (last 30 days)
+GET {{baseUrl}}/dashboard/statistics?limit=30
+
+---
+
+### =====================
+### GURU ENDPOINTS
+### =====================
+
+### GET All Guru
+GET {{baseUrl}}/guru
+
+### GET Guru by ID
+GET {{baseUrl}}/guru/1
+
+### CREATE Guru
+POST {{baseUrl}}/guru
+Content-Type: {{contentType}}
+
+{
+  "nama_guru": "Ibu Siti",
+  "no_hp": "081234567890",
+  "email": "siti@tkmutiara.com"
+}
+
+### UPDATE Guru
+PUT {{baseUrl}}/guru/1
+Content-Type: {{contentType}}
+
+{
+  "nama_guru": "Ibu Siti Updated",
+  "no_hp": "081234567891",
+  "email": "siti.updated@tkmutiara.com"
+}
+
+### DELETE Guru
+DELETE {{baseUrl}}/guru/1
+
+---
+
+### =====================
+### KELAS ENDPOINTS
+### =====================
+
+### GET All Kelas
+GET {{baseUrl}}/kelas
+
+### GET Kelas by ID
+GET {{baseUrl}}/kelas/1
+
+### GET Siswa in Kelas
+GET {{baseUrl}}/kelas/1/siswa
+
+### CREATE Kelas
+POST {{baseUrl}}/kelas
+Content-Type: {{contentType}}
+
+{
+  "id_guru": 1,
+  "nama_kelas": "Kelompok A"
+}
+
+### DELETE Kelas
+DELETE {{baseUrl}}/kelas/1
+
+---
+
+### =====================
+### SISWA ENDPOINTS
+### =====================
+
+### GET All Siswa
+GET {{baseUrl}}/siswa
+
+### GET Siswa by ID
+GET {{baseUrl}}/siswa/1
+
+### CREATE Siswa
+POST {{baseUrl}}/siswa
+Content-Type: {{contentType}}
+
+{
+  "id_kelas": 1,
+  "nama_anak": "Bintang Indah",
+  "nama_orgtua": "Budi Santoso",
+  "tgl_lahir": "2021-05-10",
+  "jenis_kelamin": "L",
+  "alamat": "Jl. Merdeka No. 5"
+}
+
+### DELETE Siswa
+DELETE {{baseUrl}}/siswa/1
+
+---
+
+### =====================
+### TAGIHAN ENDPOINTS
+### =====================
+
+### GET All Tagihan
+GET {{baseUrl}}/tagihan
+
+### GET Tagihan by ID
+GET {{baseUrl}}/tagihan/1
+
+### GET Tagihan by Siswa
+GET {{baseUrl}}/siswa/1/tagihan
+
+### CREATE Tagihan
+POST {{baseUrl}}/tagihan
+Content-Type: {{contentType}}
+
+{
+  "nomor_induk_siswa": 1,
+  "jumlah_tagihan": 300000,
+  "periode": "April 2026"
+}
+
+### DELETE Tagihan
+DELETE {{baseUrl}}/tagihan/1
+
+---
+
+### =====================
+### PEMBAYARAN ENDPOINTS
+### =====================
+
+### GET All Pembayaran
+GET {{baseUrl}}/pembayaran
+
+### GET Pembayaran by ID
+GET {{baseUrl}}/pembayaran/1
+
+### GET Pembayaran by Tagihan
+GET {{baseUrl}}/tagihan/1/pembayaran
+
+### UPDATE Pembayaran Status - Accept
+PUT {{baseUrl}}/pembayaran/1/status
+Content-Type: {{contentType}}
+
+{
+  "status_bayar": "diterima"
+}
+
+### UPDATE Pembayaran Status - Reject
+PUT {{baseUrl}}/pembayaran/1/status
+Content-Type: {{contentType}}
+
+{
+  "status_bayar": "ditolak"
+}
+
+### UPDATE Pembayaran Status - Pending
+PUT {{baseUrl}}/pembayaran/1/status
+Content-Type: {{contentType}}
+
+{
+  "status_bayar": "menunggu"
+}

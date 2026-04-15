@@ -10,6 +10,7 @@ import (
 	"tk_mutiara_backend/migrations"
 	"tk_mutiara_backend/models"
 	"tk_mutiara_backend/repository"
+	"tk_mutiara_backend/routes"
 	"tk_mutiara_backend/services"
 )
 
@@ -36,6 +37,11 @@ func main() {
 
 	// Middleware
 	r.Use(middleware.CORSMiddleware())
+
+	// ==============================
+	// SETUP ADMIN ROUTES
+	// ==============================
+	routes.SetupAdminRoutes(r)
 
 	// ==============================
 	// PUBLIC ROUTES
