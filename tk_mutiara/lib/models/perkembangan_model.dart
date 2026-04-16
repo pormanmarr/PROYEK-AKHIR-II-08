@@ -1,80 +1,91 @@
+class PerkembanganKategoriModel {
+  final int idCategori;
+  final int idPerkembangan;
+  final String namaKategori;
+  final int nilai;
+  final String statusUtama;
+  final String deskripsi;
+  final String createdAt;
+  final String updatedAt;
+
+  PerkembanganKategoriModel({
+    required this.idCategori,
+    required this.idPerkembangan,
+    required this.namaKategori,
+    required this.nilai,
+    required this.statusUtama,
+    required this.deskripsi,
+    required this.createdAt,
+    required this.updatedAt,
+  });
+
+  factory PerkembanganKategoriModel.fromJson(Map<String, dynamic> json) {
+    return PerkembanganKategoriModel(
+      idCategori: json['id_perkembangan_kategori'] ?? 0,
+      idPerkembangan: json['id_perkembangan'] ?? 0,
+      namaKategori: json['nama_kategori'] ?? '',
+      nilai: json['nilai'] ?? 0,
+      statusUtama: json['status_utama'] ?? 'BSH',
+      deskripsi: json['deskripsi'] ?? '',
+      createdAt: json['created_at'] ?? '',
+      updatedAt: json['updated_at'] ?? '',
+    );
+  }
+}
+
 class PerkembanganModel {
-  final String id;
+  final int idPerkembangan;
+  final int idGuru;
+  final String nomorIndukSiswa;
   final String namaAnak;
-  final String tanggal;
+  final String namaGuru;
+  final String kelas;
+  final int bulan;
+  final int tahun;
   final String kategori;
   final String deskripsi;
-  final double nilaiKognitif;
-  final double nilaiMotorik;
-  final double nilaiSosial;
-  final double nilaiBahasa;
-  final double nilaiSeni;
-  final String catatan;
-  final String fotoUrl;
+  final String templateDeskripsi;
+  final String statusUtama;
+  final String createdAt;
+  final String updatedAt;
+  final List<PerkembanganKategoriModel> kategoriDetails;
 
   PerkembanganModel({
-    required this.id,
+    required this.idPerkembangan,
+    required this.idGuru,
+    required this.nomorIndukSiswa,
     required this.namaAnak,
-    required this.tanggal,
+    required this.namaGuru,
+    required this.kelas,
+    required this.bulan,
+    required this.tahun,
     required this.kategori,
     required this.deskripsi,
-    required this.nilaiKognitif,
-    required this.nilaiMotorik,
-    required this.nilaiSosial,
-    required this.nilaiBahasa,
-    required this.nilaiSeni,
-    required this.catatan,
-    this.fotoUrl = '',
+    required this.templateDeskripsi,
+    required this.statusUtama,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.kategoriDetails,
   });
 
   factory PerkembanganModel.fromJson(Map<String, dynamic> json) {
+    var kategoris = json['kategori_details'] as List? ?? [];
     return PerkembanganModel(
-      id: json['id'] ?? '',
-      namaAnak: json['nama_anak'] ?? '',
-      tanggal: json['tanggal'] ?? '',
+      idPerkembangan: json['id_perkembangan'] ?? 0,
+      idGuru: json['id_guru'] ?? 0,
+      nomorIndukSiswa: json['nomor_induk_siswa'] ?? '',
+      namaAnak: json['nama_siswa'] ?? '',
+      namaGuru: json['nama_guru'] ?? '',
+      kelas: json['kelas'] ?? '',
+      bulan: json['bulan'] ?? 0,
+      tahun: json['tahun'] ?? 0,
       kategori: json['kategori'] ?? '',
       deskripsi: json['deskripsi'] ?? '',
-      nilaiKognitif: (json['nilai_kognitif'] ?? 0).toDouble(),
-      nilaiMotorik: (json['nilai_motorik'] ?? 0).toDouble(),
-      nilaiSosial: (json['nilai_sosial'] ?? 0).toDouble(),
-      nilaiBahasa: (json['nilai_bahasa'] ?? 0).toDouble(),
-      nilaiSeni: (json['nilai_seni'] ?? 0).toDouble(),
-      catatan: json['catatan'] ?? '',
-      fotoUrl: json['foto_url'] ?? '',
+      templateDeskripsi: json['template_deskripsi'] ?? '',
+      statusUtama: json['status_utama'] ?? 'BSH',
+      createdAt: json['created_at'] ?? '',
+      updatedAt: json['updated_at'] ?? '',
+      kategoriDetails: kategoris.map((k) => PerkembanganKategoriModel.fromJson(k)).toList(),
     );
-  }
-
-  // === DUMMY DATA ===
-  static List<PerkembanganModel> dummyData() {
-    return [
-      PerkembanganModel(
-        id: '1',
-        namaAnak: 'Bintang Mutiara',
-        tanggal: 'Maret 2025',
-        kategori: 'Perkembangan Bulanan',
-        deskripsi: 'Bintang menunjukkan perkembangan yang sangat baik bulan ini.',
-        nilaiKognitif: 85,
-        nilaiMotorik: 90,
-        nilaiSosial: 80,
-        nilaiBahasa: 88,
-        nilaiSeni: 92,
-        catatan:
-            'Bintang sangat aktif dalam kegiatan kelas. Ia menunjukkan kemampuan mengenal angka dan huruf dengan baik, serta sudah bisa menulis namanya sendiri.',
-      ),
-      PerkembanganModel(
-        id: '2',
-        namaAnak: 'Bintang Mutiara',
-        tanggal: 'Februari 2025',
-        kategori: 'Perkembangan Bulanan',
-        deskripsi: 'Perkembangan Bintang di bulan Februari stabil dan memuaskan.',
-        nilaiKognitif: 80,
-        nilaiMotorik: 85,
-        nilaiSosial: 78,
-        nilaiBahasa: 82,
-        nilaiSeni: 88,
-        catatan:
-            'Bintang mulai menunjukkan ketertarikan pada seni menggambar. Kemampuan bersosialisasi dengan teman sebaya juga semakin meningkat.',
-      ),
-    ];
   }
 }

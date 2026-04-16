@@ -4,14 +4,13 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gin-gonic/gin"
 	"tk_mutiara_backend/config"
+	"tk_mutiara_backend/handlers"
 	"tk_mutiara_backend/middleware"
 	"tk_mutiara_backend/migrations"
 	"tk_mutiara_backend/models"
-	"tk_mutiara_backend/repository"
-	"tk_mutiara_backend/routes"
-	"tk_mutiara_backend/services"
+
+	"github.com/gin-gonic/gin"
 )
 
 func main() {
@@ -39,11 +38,6 @@ func main() {
 	r.Use(middleware.CORSMiddleware())
 
 	// ==============================
-	// SETUP ADMIN ROUTES
-	// ==============================
-	routes.SetupAdminRoutes(r)
-
-	// ==============================
 	// PUBLIC ROUTES
 	// ==============================
 	r.GET("/", func(c *gin.Context) {
@@ -53,8 +47,8 @@ func main() {
 		})
 	})
 
-	// Login route
-	r.POST("/login", loginHandler)
+	// Login route - NEW HANDLER
+	r.POST("/login", handlers.LoginHandler)
 
 	// ==============================
 	// PROTECTED ROUTES
@@ -62,28 +56,9 @@ func main() {
 	protected := r.Group("/api")
 	protected.Use(middleware.AuthMiddleware())
 	{
-		// Pengumuman routes
-		pengumumanRepo := repository.NewPengumumanRepository()
-		pengumumanService := services.NewPengumumanService(pengumumanRepo)
-
-		protected.GET("/pengumuman", getPengumuman(pengumumanService))
-		protected.GET("/pengumuman/:id", getPengumumanByID(pengumumanService))
-		protected.POST("/pengumuman/:id/read", markPengumumanAsRead(pengumumanService))
-
 		// Perkembangan routes
-		perkembanganRepo := repository.NewPerkembanganRepository()
-		perkembanganService := services.NewPerkembanganService(perkembanganRepo)
-
-		protected.GET("/perkembangan", getPerkembangan(perkembanganService))
-		protected.GET("/perkembangan/:id", getPerkembanganByID(perkembanganService))
-
-		// Pembayaran routes
-		pembayaranRepo := repository.NewPembayaranRepository()
-		pembayaranService := services.NewPembayaranService(pembayaranRepo)
-
-		protected.GET("/pembayaran", getPembayaran(pembayaranService))
-		protected.GET("/pembayaran/:id", getPembayaranByID(pembayaranService))
-		protected.POST("/pembayaran/bayar", bayarPembayaran(pembayaranService))
+		protected.GET("/perkembangan", handlers.GetPerkembanganHandler)
+		protected.GET("/perkembangan/:id", handlers.GetPerkembanganByIDHandler)
 	}
 
 	// Start server
@@ -91,199 +66,5 @@ func main() {
 	log.Printf("Server berjalan di http://localhost%s\n", port)
 	if err := r.Run(port); err != nil {
 		log.Fatalf("Gagal menjalankan server: %v", err)
-	}
-}
-
-// ==============================
-// HANDLERS
-// ==============================
-
-func loginHandler(c *gin.Context) {
-	var req models.LoginRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, models.ApiResponse{
-			Success: false,
-			Error:   "Format request tidak valid",
-		})
-		return
-	}
-
-	// Dummy user validation (nanti ganti dengan repository)
-	if req.Email == "orangtua@tkmutiara.com" && req.Password == "mutiara123" {
-		token, err := middleware.GenerateToken(req.Email, "orangtua")
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ApiResponse{
-				Success: false,
-				Error:   "Gagal membuat token",
-			})
-			return
-		}
-
-		c.JSON(http.StatusOK, models.ApiResponse{
-			Success: true,
-			Data: gin.H{
-				"token": token,
-				"user": gin.H{
-					"nama_anak": "Bintang Mutiara",
-					"kelas":     "Kelompok A",
-					"email":     req.Email,
-				},
-			},
-		})
-	} else {
-		c.JSON(http.StatusUnauthorized, models.ApiResponse{
-			Success: false,
-			Error:   "Email atau password salah",
-		})
-	}
-}
-
-func getPengumuman(svc *services.PengumumanService) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		data, err := svc.GetAll()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ApiResponse{
-				Success: false,
-				Error:   "Gagal mengambil data pengumuman",
-			})
-			return
-		}
-		c.JSON(http.StatusOK, models.ApiResponse{
-			Success: true,
-			Data:    data,
-		})
-	}
-}
-
-func getPengumumanByID(svc *services.PengumumanService) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id := c.Param("id")
-		data, err := svc.GetByID(id)
-		if err != nil {
-			c.JSON(http.StatusNotFound, models.ApiResponse{
-				Success: false,
-				Error:   "Pengumuman tidak ditemukan",
-			})
-			return
-		}
-		c.JSON(http.StatusOK, models.ApiResponse{
-			Success: true,
-			Data:    data,
-		})
-	}
-}
-
-func markPengumumanAsRead(svc *services.PengumumanService) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id := c.Param("id")
-		if err := svc.MarkAsRead(id); err != nil {
-			c.JSON(http.StatusInternalServerError, models.ApiResponse{
-				Success: false,
-				Error:   "Gagal menandai pengumuman",
-			})
-			return
-		}
-		c.JSON(http.StatusOK, models.ApiResponse{
-			Success: true,
-			Message: "Pengumuman berhasil ditandai",
-		})
-	}
-}
-
-func getPerkembangan(svc *services.PerkembanganService) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		data, err := svc.GetAll()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ApiResponse{
-				Success: false,
-				Error:   "Gagal mengambil data perkembangan",
-			})
-			return
-		}
-		c.JSON(http.StatusOK, models.ApiResponse{
-			Success: true,
-			Data:    data,
-		})
-	}
-}
-
-func getPerkembanganByID(svc *services.PerkembanganService) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id := c.Param("id")
-		data, err := svc.GetByID(id)
-		if err != nil {
-			c.JSON(http.StatusNotFound, models.ApiResponse{
-				Success: false,
-				Error:   "Perkembangan tidak ditemukan",
-			})
-			return
-		}
-		c.JSON(http.StatusOK, models.ApiResponse{
-			Success: true,
-			Data:    data,
-		})
-	}
-}
-
-func getPembayaran(svc *services.PembayaranService) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		data, err := svc.GetAll()
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ApiResponse{
-				Success: false,
-				Error:   "Gagal mengambil data pembayaran",
-			})
-			return
-		}
-		c.JSON(http.StatusOK, models.ApiResponse{
-			Success: true,
-			Data:    data,
-		})
-	}
-}
-
-func getPembayaranByID(svc *services.PembayaranService) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		id := c.Param("id")
-		data, err := svc.GetByID(id)
-		if err != nil {
-			c.JSON(http.StatusNotFound, models.ApiResponse{
-				Success: false,
-				Error:   "Pembayaran tidak ditemukan",
-			})
-			return
-		}
-		c.JSON(http.StatusOK, models.ApiResponse{
-			Success: true,
-			Data:    data,
-		})
-	}
-}
-
-func bayarPembayaran(svc *services.PembayaranService) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		var req models.BayarRequest
-		if err := c.ShouldBindJSON(&req); err != nil {
-			c.JSON(http.StatusBadRequest, models.ApiResponse{
-				Success: false,
-				Error:   "Format request tidak valid",
-			})
-			return
-		}
-
-		result, err := svc.ProcessPayment(req.ID, req.Metode)
-		if err != nil {
-			c.JSON(http.StatusInternalServerError, models.ApiResponse{
-				Success: false,
-				Error:   "Gagal memproses pembayaran",
-			})
-			return
-		}
-
-		c.JSON(http.StatusOK, models.ApiResponse{
-			Success: true,
-			Message: "Pembayaran berhasil diproses",
-			Data:    result,
-		})
 	}
 }

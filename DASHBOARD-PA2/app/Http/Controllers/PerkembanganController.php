@@ -65,6 +65,7 @@ class PerkembanganController extends Controller
         $validated = $request->validate($rules);
 
         // Create main perkembangan record
+        $templateDeskripsi = $this->getTemplateDeskripsi($statusUtama);
         $perkembangan = Perkembangan::create([
             'id_guru' => session('id_guru'),
             'nomor_induk_siswa' => $validated['nomor_induk_siswa'],
@@ -72,7 +73,8 @@ class PerkembanganController extends Controller
             'tahun' => Carbon::now()->year,
             'kategori' => implode(',', $kategoris),
             'status_utama' => $statusUtama,
-            'deskripsi' => $request->input('deskripsi_tambahan') ?? ''
+            'deskripsi' => $request->input('deskripsi_tambahan') ?? '',
+            'template_deskripsi' => $templateDeskripsi
         ]);
 
         // Create kategori details for each selected kategori
@@ -113,6 +115,17 @@ class PerkembanganController extends Controller
         $nilaiDesc = $nilaiDescriptions[$nilai] ?? 'Tidak diketahui';
         
         return "Perkembangan {$kategori} anak menunjukkan status {$statusDesc} dengan nilai {$nilai}/10 ({$nilaiDesc}). Anak perlu mendapatkan dukungan berkelanjutan untuk mencapai perkembangan yang lebih optimal.";
+    }
+
+    private function getTemplateDeskripsi($status)
+    {
+        $templates = [
+            'BB' => 'Anak belum menunjukkan kemampuan dalam aspek ini. Perlu dukungan dan bimbingan intensif dari guru untuk mengembangkan kompetensi ini.',
+            'MB' => 'Anak mulai menunjukkan kemampuan dalam aspek ini namun masih memerlukan bimbingan. Perlu terus didukung untuk mencapai perkembangan yang lebih baik.',
+            'BSH' => 'Anak menunjukkan kemampuan yang sesuai dengan harapan untuk usia/tingkatannya. Anak mampu melaksanakan tugas dengan cukup baik.',
+            'BSB' => 'Anak menunjukkan kemampuan yang sangat menonjol dalam aspek ini. Anak mampu melaksanakan tugas dengan sangat baik dan melampaui harapan.'
+        ];
+        return $templates[$status] ?? '';
     }
 
     public function show(Perkembangan $perkembangan)

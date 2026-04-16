@@ -30,7 +30,7 @@ func (s *PerkembanganService) GetByID(id string) (*models.Perkembangan, error) {
 	return s.repo.GetByID(intID)
 }
 
-// GetByNamaAnak mengambil perkembangan berdasarkan nama anak
-func (s *PerkembanganService) GetByNamaAnak(namaAnak string) ([]models.Perkembangan, error) {
-	return s.repo.GetByNamaAnak(namaAnak)
+// GetByNomorInduk mengambil perkembangan berdasarkan nomor induk siswa
+func (s *PerkembanganService) GetByNomorInduk(nomorInduk string) ([]models.Perkembangan, error) {
+	return s.repo.GetByNomorInduk(nomorInduk)
 }

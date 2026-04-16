@@ -13,9 +13,9 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
   final _emailController = TextEditingController(
-    text: 'orangtua@tkmutiara.com',
+    text: 'andikapurba',
   );
-  final _passwordController = TextEditingController(text: 'mutiara123');
+  final _passwordController = TextEditingController(text: 'password123');
   bool _isLoading = false;
   bool _obscurePassword = true;
   String? _errorMsg;
@@ -48,31 +48,55 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void _login() async {
+    // Validasi input
+    if (_emailController.text.isEmpty) {
+      setState(() => _errorMsg = 'Username tidak boleh kosong');
+      return;
+    }
+    if (_passwordController.text.isEmpty) {
+      setState(() => _errorMsg = 'Password tidak boleh kosong');
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _errorMsg = null;
     });
 
-    final result = await ApiService.login(
-      _emailController.text.trim(),
-      _passwordController.text.trim(),
-    );
-
-    setState(() => _isLoading = false);
-
-    if (result['success']) {
-      if (!mounted) return;
-      Navigator.pushReplacement(
-        context,
-        PageRouteBuilder(
-          pageBuilder: (_, __, ___) => const DashboardScreen(),
-          transitionsBuilder: (_, anim, __, child) =>
-              FadeTransition(opacity: anim, child: child),
-          transitionDuration: const Duration(milliseconds: 500),
-        ),
+    try {
+      final result = await ApiService.login(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
       );
-    } else {
-      setState(() => _errorMsg = result['message']);
+
+      if (!mounted) return;
+      
+      setState(() => _isLoading = false);
+
+      if (result['success'] == true) {
+        // Login berhasil, navigate ke dashboard
+        if (!mounted) return;
+        Navigator.pushReplacement(
+          context,
+          PageRouteBuilder(
+            pageBuilder: (_, __, ___) => const DashboardScreen(),
+            transitionsBuilder: (_, anim, __, child) =>
+                FadeTransition(opacity: anim, child: child),
+            transitionDuration: const Duration(milliseconds: 500),
+          ),
+        );
+      } else {
+        // Login gagal, tampilkan error
+        setState(() {
+          _errorMsg = result['message'] ??
+              'Login gagal. Cek username dan password Anda.';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMsg = 'Terjadi kesalahan: $e';
+      });
     }
   }
 
@@ -285,7 +309,7 @@ class _LoginScreenState extends State<LoginScreen>
               ),
               const SizedBox(height: 8),
               const Text(
-                'Email: orangtua@tkmutiara.com',
+                'Username: andikapurba',
                 style: TextStyle(
                   color: AppTheme.textDark,
                   fontSize: 12,
@@ -293,7 +317,7 @@ class _LoginScreenState extends State<LoginScreen>
                 ),
               ),
               const Text(
-                'Password: mutiara123',
+                'Password: password123',
                 style: TextStyle(
                   color: AppTheme.textDark,
                   fontSize: 12,

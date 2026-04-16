@@ -17,7 +17,8 @@ class Perkembangan extends Model
         'tahun',
         'kategori',
         'deskripsi',
-        'status_utama'
+        'status_utama',
+        'template_deskripsi'
     ];
 
     public function guru(): BelongsTo

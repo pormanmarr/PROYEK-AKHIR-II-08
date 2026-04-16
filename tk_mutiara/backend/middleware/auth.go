@@ -5,10 +5,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
 	"tk_mutiara_backend/config"
 	"tk_mutiara_backend/models"
+
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 // AuthMiddleware middleware untuk verifikasi JWT
@@ -25,9 +26,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		// Hapus prefix "Bearer "
-		if strings.HasPrefix(tokenString, "Bearer ") {
-			tokenString = strings.TrimPrefix(tokenString, "Bearer ")
-		}
+		tokenString = strings.TrimPrefix(tokenString, "Bearer ")
 
 		token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 			return []byte(config.AppConfig.JWTSecret), nil
@@ -43,8 +42,11 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		claims := token.Claims.(jwt.MapClaims)
-		c.Set("email", claims["email"])
+		c.Set("user_id", claims["user_id"])
+		c.Set("username", claims["username"])
 		c.Set("role", claims["role"])
+		c.Set("nomor_induk_siswa", claims["nomor_induk_siswa"])
+		c.Set("id_guru", claims["id_guru"])
 
 		c.Next()
 	}

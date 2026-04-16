@@ -5,10 +5,15 @@ import '../models/pengumuman_model.dart';
 import '../models/perkembangan_model.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://10.0.2.2:8081';
+  static const String baseUrl = 'http://192.168.90.220:8081';  // ini make ipv4 masing masing ya
 
-  // Simpan token setelah login
+  // Simpan token & user data setelah login
   static String? _token;
+  static Map<String, dynamic>? _user;
+
+  // Getter untuk user data
+  static Map<String, dynamic>? get userInfo => _user;
+  static String? get token => _token;
 
   static Map<String, String> get _headers => {
         'Content-Type': 'application/json',
@@ -18,28 +23,60 @@ class ApiService {
   // LOGIN
   static Future<Map<String, dynamic>> login(String email, String password) async {
     try {
+      print('=== LOGIN REQUEST ===');
+      print('URL: $baseUrl/login');
+      print('Email: $email');
+      
       final res = await http.post(
         Uri.parse('$baseUrl/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}),
+      ).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () {
+          throw Exception('Request timeout - Backend tidak merespons');
+        },
       );
 
-      final data = jsonDecode(res.body);
+      print('=== RESPONSE ===');
+      print('Status: ${res.statusCode}');
+      print('Body: ${res.body}');
 
-      if (res.statusCode == 200) {
-        _token = data['token']; 
-        return {'success': true, 'user': data['user']};
+      final data = jsonDecode(res.body);
+      print('Parsed Data: $data');
+
+      if (res.statusCode == 200 && data['success'] == true) {
+        _token = data['token'];
+        _user = data['user'];  // SAVE USER DATA
+        print('✓ Token saved: $_token');
+        print('✓ User saved: $_user');
+        return {
+          'success': true,
+          'token': data['token'],
+          'user': data['user'] ?? {},
+          'message': 'Login berhasil'
+        };
       } else {
-        return {'success': false, 'message': data['error']};
+        final errorMsg = data['error'] ?? data['message'] ?? 'Login gagal';
+        print('✗ Login Error: $errorMsg');
+        return {
+          'success': false,
+          'message': errorMsg,
+        };
       }
     } catch (e) {
-      return {'success': false, 'message': 'Tidak bisa terhubung ke server'};
+      print('✗ Exception: $e');
+      return {
+        'success': false,
+        'message': 'Koneksi error: $e'
+      };
     }
   }
 
   // LOGOUT
   static void logout() {
     _token = null;
+    _user = null;
   }
 
   // PENGUMUMAN
@@ -65,20 +102,46 @@ class ApiService {
   // PERKEMBANGAN
   static Future<List<PerkembanganModel>> getPerkembangan() async {
     try {
+      print('=== GET PERKEMBANGAN ===');
+      print('Token: $_token');
+      print('URL: $baseUrl/api/perkembangan');
+      
       final res = await http.get(
-        Uri.parse('$baseUrl/perkembangan'),
+        Uri.parse('$baseUrl/api/perkembangan'),
         headers: _headers,
+      ).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => throw Exception('Request timeout'),
       );
 
+      print('Status: ${res.statusCode}');
+      print('Body: ${res.body}');
+
       if (res.statusCode == 200) {
-        final List data = jsonDecode(res.body);
-        return data.map((e) => PerkembanganModel.fromJson(e)).toList();
+        final Map<String, dynamic> decoded = jsonDecode(res.body);
+        print('Decoded: $decoded');
+        
+        if (decoded['success'] == true) {
+          final List data = decoded['data'] ?? [];
+          print('Data count: ${data.length}');
+          
+          final result = data.map((e) => PerkembanganModel.fromJson(e)).toList();
+          print('✓ Loaded ${result.length} perkembangan records');
+          return result;
+        } else {
+          print('API error: ${decoded['error']}');
+          throw Exception('API error: ${decoded['error']}');
+        }
       } else if (res.statusCode == 401) {
+        print('✗ Unauthorized - Token expired');
         throw Exception('Sesi habis, silakan login ulang');
+      } else {
+        print('✗ Error status: ${res.statusCode}');
+        throw Exception('Server error: ${res.statusCode}');
       }
-      return [];
     } catch (e) {
-      return PerkembanganModel.dummyData();
+      print('✗ Exception: $e');
+      rethrow;
     }
   }
 

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'theme/app_theme.dart';
 import 'screens/login_screen.dart';
-import 'screens/dashboard_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -24,8 +23,8 @@ class MutiaraApp extends StatelessWidget {
       title: 'TK Mutiara',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
-      // home: const LoginScreen(), // ini kalo mau langsung tampilan login
-      home: const DashboardScreen(),
+      home: const LoginScreen(), // ini kalo mau langsung tampilan login
+      // home: const DashboardScreen(),
     );
   }
 }

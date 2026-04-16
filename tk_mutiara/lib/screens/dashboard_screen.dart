@@ -3,6 +3,7 @@ import '../theme/app_theme.dart';
 import '../widgets/menu_card.dart';
 import '../models/pembayaran_model.dart';
 import '../models/pengumuman_model.dart';
+import '../services/api_services.dart';
 import 'perkembangan_screen.dart';
 import 'pembayaran_screen.dart';
 import 'pengumuman_screen.dart';
@@ -37,6 +38,17 @@ class _DashboardScreenState extends State<DashboardScreen>
   @override
   void initState() {
     super.initState();
+    
+    // Get user info from ApiService
+    final userInfo = ApiService.userInfo;
+    if (userInfo != null) {
+      _namaAnak = userInfo['nama_siswa'] ?? 'User';
+      // Buat inisial dari nama
+      final names = _namaAnak.split(' ');
+      _inisial = (names.map((n) => n[0]).join('').toUpperCase());
+      print('✓ Dashboard loaded for: $_namaAnak (Inisial: $_inisial)');
+    }
+    
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
