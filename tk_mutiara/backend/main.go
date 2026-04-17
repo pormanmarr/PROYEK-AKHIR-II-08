@@ -56,6 +56,10 @@ func main() {
 	protected := r.Group("/api")
 	protected.Use(middleware.AuthMiddleware())
 	{
+		// Pengumuman routes
+		protected.GET("/pengumuman", handlers.GetPengumumanHandler)
+		protected.GET("/pengumuman/:id", handlers.GetPengumumanByIDHandler)
+
 		// Perkembangan routes
 		protected.GET("/perkembangan", handlers.GetPerkembanganHandler)
 		protected.GET("/perkembangan/:id", handlers.GetPerkembanganByIDHandler)

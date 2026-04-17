@@ -1,374 +1,772 @@
 import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/pengumuman_model.dart';
+import '../services/api_services.dart';
 
 class PengumumanScreen extends StatefulWidget {
-  final List<PengumumanModel> pengumuman;
-  final String? selectedId;
+  final int? idPengumuman; // ID untuk detail view
 
   const PengumumanScreen({
     super.key,
-    required this.pengumuman,
-    this.selectedId,
+    this.idPengumuman,
   });
 
   @override
   State<PengumumanScreen> createState() => _PengumumanScreenState();
 }
 
-class _PengumumanScreenState extends State<PengumumanScreen> {
-  PengumumanModel? _selected;
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
+class _PengumumanScreenState extends State<PengumumanScreen> with TickerProviderStateMixin {
+  List<PengumumanModel> _data = [];
+  PengumumanModel? _selectedData;
+  bool _isLoading = true;
+  String? _errorMsg;
+  late AnimationController _fadeController;
 
   @override
   void initState() {
     super.initState();
-    if (widget.selectedId != null) {
-      _selected = widget.pengumuman.firstWhere(
-        (p) => p.id == widget.selectedId,
-        orElse: () => widget.pengumuman.first,
-      );
-
-      if (_selected != null && !_selected!.isRead) {
-        _markAsRead(_selected!);
-      }
-    }
-  }
-
-  // ✅ Fungsi ini sudah diperbaiki
-  void _markAsRead(PengumumanModel pengumuman) {
-    final index = widget.pengumuman.indexWhere((p) => p.id == pengumuman.id);
-
-    if (index != -1) {
-      setState(() {
-        // Menggunakan copyWith agar tidak error 'final'
-        widget.pengumuman[index] = pengumuman.copyWith(isRead: true);
-      });
-    }
-  }
-
-  List<PengumumanModel> get _filtered {
-    if (_searchQuery.isEmpty) return widget.pengumuman;
-
-    final query = _searchQuery.toLowerCase().trim();
-    return widget.pengumuman.where((p) {
-      return p.judul.toLowerCase().contains(query) ||
-          p.isi.toLowerCase().contains(query);
-    }).toList();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppTheme.background,
-      body: SafeArea(
-        child: _selected != null ? _buildDetail(context) : _buildList(context),
-      ),
+    _fadeController = AnimationController(
+      duration: const Duration(milliseconds: 600),
+      vsync: this,
     );
-  }
-
-  // ====================== LIST VIEW ======================
-  Widget _buildList(BuildContext context) {
-    final unreadCount = widget.pengumuman.where((p) => !p.isRead).length;
-
-    return Column(
-      children: [
-        _buildHeader(unreadCount),
-        _buildSearchBar(),
-        Expanded(
-          child: _filtered.isEmpty
-              ? _buildEmptyState()
-              : ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
-                  itemCount: _filtered.length,
-                  itemBuilder: (_, i) => _buildCard(_filtered[i]),
-                ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHeader(int unreadCount) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 20, 16),
-      color: AppTheme.white,
-      child: Row(
-        children: [
-          IconButton(
-            onPressed: () => Navigator.pop(context),
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: AppTheme.textDark, size: 20),
-          ),
-          const SizedBox(width: 8),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  'Pengumuman',
-                  style: TextStyle(
-                    color: AppTheme.textDark,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-                Text(
-                  '$unreadCount pengumuman belum dibaca',
-                  style: TextStyle(
-                    color: unreadCount > 0 ? AppTheme.primary : AppTheme.textMedium,
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildSearchBar() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      decoration: BoxDecoration(
-        color: AppTheme.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: AppTheme.cardShadowList,
-      ),
-      child: TextField(
-        controller: _searchController,
-        onChanged: (value) => setState(() => _searchQuery = value),
-        decoration: InputDecoration(
-          hintText: 'Cari pengumuman...',
-          border: InputBorder.none,
-          icon: const Icon(Icons.search, color: AppTheme.textMedium),
-          suffixIcon: _searchQuery.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    _searchController.clear();
-                    setState(() => _searchQuery = '');
-                  },
-                )
-              : null,
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCard(PengumumanModel p) {
-    return GestureDetector(
-      onTap: () {
-        setState(() {
-          _selected = p;
-          if (!p.isRead) {
-            _markAsRead(p);
-          }
-        });
-      },
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 14),
-        decoration: BoxDecoration(
-          color: AppTheme.white,
-          borderRadius: BorderRadius.circular(20),
-          boxShadow: AppTheme.cardShadowList,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Text(
-                      p.judul,
-                      style: TextStyle(
-                        color: AppTheme.textDark,
-                        fontSize: 15,
-                        fontWeight: p.isRead ? FontWeight.w600 : FontWeight.w800,
-                      ),
-                    ),
-                  ),
-                  if (!p.isRead)
-                    Container(
-                      width: 8,
-                      height: 8,
-                      decoration: const BoxDecoration(
-                        color: Colors.red,
-                        shape: BoxShape.circle,
-                      ),
-                    ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text(
-                p.isi,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(
-                  color: AppTheme.textMedium,
-                  fontSize: 13,
-                  height: 1.4,
-                ),
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Icon(Icons.access_time_rounded,
-                      size: 14, color: AppTheme.textMedium),
-                  const SizedBox(width: 6),
-                  Text(
-                    p.tanggal,
-                    style: TextStyle(
-                      color: AppTheme.textMedium,
-                      fontSize: 12,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-    Widget _buildEmptyState() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            padding: const EdgeInsets.all(20),
-            decoration: BoxDecoration(
-              color: Colors.grey[100],
-              shape: BoxShape.circle,
-            ),
-            child: const Icon(
-              Icons.search_off_rounded,
-              size: 72,
-              color: Colors.grey,
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            'Tidak ada pengumuman ditemukan',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w600,
-              color: AppTheme.textDark,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Silakan coba kata kunci pencarian lain',
-            style: TextStyle(
-              fontSize: 14,
-              color: AppTheme.textMedium,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ====================== DETAIL VIEW ======================
-  Widget _buildDetail(BuildContext context) {
-    final p = _selected!;
-
-    return Column(
-      children: [
-        Container(
-          padding: const EdgeInsets.fromLTRB(16, 12, 20, 16),
-          color: AppTheme.white,
-          child: Row(
-            children: [
-              IconButton(
-                onPressed: () => setState(() => _selected = null),
-                icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                    color: AppTheme.textDark),
-              ),
-              const SizedBox(width: 8),
-              const Expanded(
-                child: Text(
-                  'Detail Pengumuman',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w800,
-                    color: AppTheme.textDark,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  p.judul,
-                  style: const TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w800,
-                    height: 1.3,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    const Icon(Icons.access_time_rounded, size: 18),
-                    const SizedBox(width: 8),
-                    Text(
-                      p.tanggal,
-                      style: TextStyle(
-                        color: AppTheme.textMedium,
-                        fontSize: 14,
-                      ),
-                    ),
-                  ],
-                ),
-                const Divider(height: 32),
-                Text(
-                  p.isi,
-                  style: const TextStyle(
-                    fontSize: 15,
-                    height: 1.7,
-                    color: AppTheme.textDark,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Map<String, dynamic> _getKategoriConfig(String kategori) {
-    switch (kategori.toLowerCase()) {
-      case 'penting':
-        return {'color': Colors.red};
-      case 'kegiatan':
-        return {'color': Colors.blue};
-      case 'informasi':
-        return {'color': Colors.orange};
-      default:
-        return {'color': Colors.green};
-    }
+    _loadPengumuman();
   }
 
   @override
   void dispose() {
-    _searchController.dispose();
+    _fadeController.dispose();
     super.dispose();
+  }
+
+  void _loadPengumuman() async {
+    try {
+      print('Loading pengumuman...');
+      final data = await ApiService.getPengumuman();
+      setState(() {
+        _data = data;
+        _isLoading = false;
+        
+        // Jika ada ID, cari pengumuman dengan ID tersebut
+        if (widget.idPengumuman != null && _data.isNotEmpty) {
+          try {
+            _selectedData = _data.firstWhere(
+              (p) => p.idPengumuman == widget.idPengumuman,
+            );
+          } catch (e) {
+            // Jika tidak ketemu, gunakan yang pertama
+            _selectedData = _data.first;
+          }
+        }
+        
+        print('Loaded ${_data.length} pengumuman records');
+      });
+      _fadeController.forward();
+    } catch (e) {
+      print('Error loading pengumuman: $e');
+      setState(() {
+        _isLoading = false;
+        _errorMsg = '$e';
+      });
+    }
+  }
+
+  String _formatDate(String dateString) {
+    try {
+      final date = DateTime.parse(dateString);
+      final now = DateTime.now();
+      final difference = now.difference(date);
+      
+      if (difference.inSeconds < 60) {
+        return 'Baru saja';
+      } else if (difference.inMinutes < 60) {
+        return '${difference.inMinutes}m yang lalu';
+      } else if (difference.inHours < 24) {
+        return '${difference.inHours}j yang lalu';
+      } else if (difference.inDays < 7) {
+        return '${difference.inDays}h yang lalu';
+      } else {
+        return '${date.day}/${date.month}/${date.year}';
+      }
+    } catch (e) {
+      return dateString;
+    }
+  }
+
+  String _getImageUrl(String mediaPath) {
+    if (mediaPath.isEmpty) return '';
+    
+    // Gunakan imageBaseUrl dari ApiService (konsisten dengan baseUrl untuk API)
+    final url = '${ApiService.imageBaseUrl}/storage/$mediaPath';
+    
+    print('📸 Image URL: $url');
+    print('📸 Media Path: $mediaPath');
+    return url;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    // Jika ada ID yang dipilih, tampilkan detail view
+    if (widget.idPengumuman != null && _selectedData != null) {
+      return _buildDetailView(context);
+    }
+    
+    // Jika loading, tampilkan loading indicator
+    if (_isLoading) {
+      return Scaffold(
+        backgroundColor: AppTheme.background,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              const Expanded(
+                child: Center(
+                  child: CircularProgressIndicator(
+                    color: AppTheme.primary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_errorMsg != null && _data.isEmpty) {
+      return Scaffold(
+        backgroundColor: AppTheme.background,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(Icons.error_outline, size: 64, color: AppTheme.textLight),
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 24),
+                        child: Text(
+                          _errorMsg!,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: AppTheme.textMedium,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          setState(() {
+                            _isLoading = true;
+                            _errorMsg = null;
+                          });
+                          _loadPengumuman();
+                        },
+                        icon: const Icon(Icons.refresh),
+                        label: const Text('Coba Lagi'),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    if (_data.isEmpty) {
+      return Scaffold(
+        backgroundColor: AppTheme.background,
+        body: SafeArea(
+          child: Column(
+            children: [
+              _buildHeader(context),
+              const Expanded(
+                child: Center(
+                  child: Text('Tidak ada pengumuman'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // List view - tampilkan semua pengumuman
+    return Scaffold(
+      backgroundColor: AppTheme.background,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            Expanded(
+              child: ListView.builder(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                itemCount: _data.length,
+                itemBuilder: (context, index) => GestureDetector(
+                  onTap: () {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => PengumumanScreen(
+                          idPengumuman: _data[index].idPengumuman,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: _buildPengumumanCard(_data[index]),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader(BuildContext context) {
+    final isDetailView = widget.idPengumuman != null;
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 20, 16),
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              padding: const EdgeInsets.all(8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0F3FF),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.arrow_back_ios_new_rounded,
+                color: AppTheme.primary,
+                size: 18,
+              ),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                isDetailView ? 'Detail Pengumuman' : 'Pengumuman',
+                style: const TextStyle(
+                  color: AppTheme.textDark,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w800,
+                  letterSpacing: -0.3,
+                ),
+              ),
+              if (!isDetailView)
+                Text(
+                  '${_data.length} pengumuman tersedia',
+                  style: TextStyle(
+                    color: AppTheme.primary.withOpacity(0.7),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+            ],
+          ),
+          const Spacer(),
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  AppTheme.primary.withOpacity(0.1),
+                  AppTheme.primary.withOpacity(0.05),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(
+              Icons.notifications_rounded,
+              color: AppTheme.primary,
+              size: 22,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDetailView(BuildContext context) {
+    final data = _selectedData!;
+    
+    return Scaffold(
+      backgroundColor: AppTheme.background,
+      body: SafeArea(
+        child: Column(
+          children: [
+            _buildHeader(context),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Media jika ada - with Hero animation
+                    if (data.media.isNotEmpty) ...[
+                      Hero(
+                        tag: 'pengumuman_${data.idPengumuman}',
+                        child: Container(
+                          width: double.infinity,
+                          height: 280,
+                          margin: const EdgeInsets.all(16),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF0F0F0),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black.withOpacity(0.1),
+                                blurRadius: 16,
+                                offset: const Offset(0, 8),
+                              ),
+                            ],
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(16),
+                            child: Image.network(
+                              _getImageUrl(data.media),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                print('❌ Image error: $error');
+                                return Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const Icon(Icons.image_not_supported, size: 56, color: AppTheme.textLight),
+                                      const SizedBox(height: 12),
+                                      Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                                        child: Column(
+                                          children: [
+                                            const Text(
+                                              'Gambar tidak dapat dimuat',
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: AppTheme.textMedium,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              'File: ${data.media}',
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                color: AppTheme.textLight,
+                                                fontSize: 10,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              loadingBuilder: (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      CircularProgressIndicator(
+                                        value: loadingProgress.expectedTotalBytes != null
+                                            ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                            : null,
+                                        color: AppTheme.primary,
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        loadingProgress.expectedTotalBytes != null
+                                            ? '${(loadingProgress.cumulativeBytesLoaded / 1024).toStringAsFixed(0)} KB'
+                                            : 'Loading...',
+                                        style: const TextStyle(
+                                          color: AppTheme.textMedium,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+
+                    // Content card
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Judul
+                          Text(
+                            data.judul,
+                            style: const TextStyle(
+                              color: AppTheme.textDark,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w900,
+                              letterSpacing: -0.5,
+                              height: 1.3,
+                            ),
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Guru & Waktu - Card with gradient background
+                          Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [
+                                  AppTheme.primary.withOpacity(0.08),
+                                  AppTheme.primary.withOpacity(0.03),
+                                ],
+                              ),
+                              borderRadius: BorderRadius.circular(14),
+                              border: Border.all(
+                                color: AppTheme.primary.withOpacity(0.1),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                // Dari Section
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.primary.withOpacity(0.15),
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        child: const Icon(Icons.person_rounded, size: 20, color: AppTheme.primary),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            const Text(
+                                              'Dari',
+                                              style: TextStyle(
+                                                color: AppTheme.textMedium,
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w600,
+                                                letterSpacing: 0.3,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              data.namaGuru.isNotEmpty ? data.namaGuru : 'Admin',
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                color: AppTheme.textDark,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w800,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                const SizedBox(width: 12),
+                                // Waktu Section
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        padding: const EdgeInsets.all(8),
+                                        decoration: BoxDecoration(
+                                          color: AppTheme.primary.withOpacity(0.15),
+                                          borderRadius: BorderRadius.circular(10),
+                                        ),
+                                        child: const Icon(Icons.access_time_rounded, size: 20, color: AppTheme.primary),
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            const Text(
+                                              'Waktu',
+                                              style: TextStyle(
+                                                color: AppTheme.textMedium,
+                                                fontSize: 11,
+                                                fontWeight: FontWeight.w600,
+                                                letterSpacing: 0.3,
+                                              ),
+                                            ),
+                                            const SizedBox(height: 2),
+                                            Text(
+                                              _formatDate(data.waktuUnggah),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                color: AppTheme.textDark,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w800,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 20),
+
+                          // Deskripsi
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppTheme.white,
+                              borderRadius: BorderRadius.circular(14),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.04),
+                                  blurRadius: 12,
+                                  offset: const Offset(0, 4),
+                                ),
+                              ],
+                              border: Border.all(
+                                color: const Color(0xFFF0F0F0),
+                                width: 1,
+                              ),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      width: 4,
+                                      height: 20,
+                                      decoration: BoxDecoration(
+                                        color: AppTheme.primary,
+                                        borderRadius: BorderRadius.circular(2),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    const Text(
+                                      'Isi Pengumuman',
+                                      style: TextStyle(
+                                        color: AppTheme.textDark,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w800,
+                                        letterSpacing: -0.2,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 12),
+                                Text(
+                                  data.deskripsi,
+                                  textAlign: TextAlign.justify,
+                                  style: const TextStyle(
+                                    color: AppTheme.textDark,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    height: 1.7,
+                                    letterSpacing: 0.2,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildPengumumanCard(PengumumanModel data) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppTheme.white,
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
+        border: Border.all(
+          color: const Color(0xFFF5F5F5),
+          width: 1,
+        ),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(14),
+        child: Row(
+          children: [
+            // Image thumbnail
+            if (data.media.isNotEmpty)
+              Hero(
+                tag: 'pengumuman_${data.idPengumuman}',
+                child: Container(
+                  width: 100,
+                  height: 110,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF0F0F0),
+                  ),
+                  child: Image.network(
+                    _getImageUrl(data.media),
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: const Color(0xFFF5F5F5),
+                      child: const Center(
+                        child: Icon(Icons.image_not_supported, size: 32, color: AppTheme.textLight),
+                      ),
+                    ),
+                    loadingBuilder: (_, child, progress) {
+                      if (progress == null) return child;
+                      return Center(
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          value: progress.expectedTotalBytes != null
+                              ? progress.cumulativeBytesLoaded / progress.expectedTotalBytes!
+                              : null,
+                          color: AppTheme.primary,
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
+            
+            // Content
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.all(14),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    // Guru & Waktu
+                    Row(
+                      children: [
+                        Icon(Icons.person_rounded, size: 14, color: AppTheme.primary.withOpacity(0.7)),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            data.namaGuru.isNotEmpty ? data.namaGuru : 'Admin',
+                            style: const TextStyle(
+                              color: AppTheme.textMedium,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 0.2,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Icon(Icons.access_time_rounded, size: 14, color: const Color(0xFFFFA726).withOpacity(0.7)),
+                        const SizedBox(width: 4),
+                        Text(
+                          _formatDate(data.waktuUnggah),
+                          style: const TextStyle(
+                            color: AppTheme.textMedium,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Judul
+                    Text(
+                      data.judul,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: AppTheme.textDark,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w800,
+                        letterSpacing: -0.3,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+
+                    // Deskripsi preview
+                    Text(
+                      data.deskripsi,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      textAlign: TextAlign.justify,
+                      style: const TextStyle(
+                        color: AppTheme.textMedium,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w500,
+                        height: 1.4,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+
+                    // Arrow indicator
+                    Row(
+                      children: [
+                        const Spacer(),
+                        Container(
+                          padding: const EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: AppTheme.primary.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Icon(
+                            Icons.arrow_forward_rounded,
+                            size: 16,
+                            color: AppTheme.primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

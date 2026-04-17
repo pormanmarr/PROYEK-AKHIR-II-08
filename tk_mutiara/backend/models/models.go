@@ -19,14 +19,17 @@ type UserLogin struct {
 	NamaGuru        string `json:"nama_guru"`
 }
 
-// Pengumuman model untuk announcements
+// Pengumuman model untuk announcements (sesuai Laravel)
 type Pengumuman struct {
-	ID       int    `json:"id" db:"id"`
-	Judul    string `json:"judul" db:"judul"`
-	Isi      string `json:"isi" db:"isi"`
-	Tanggal  string `json:"tanggal" db:"tanggal"`
-	Kategori string `json:"kategori" db:"kategori"`
-	IsRead   bool   `json:"is_read" db:"is_read"` // capai untuk track read status
+	IDPengumuman int64  `json:"id_pengumuman" db:"id_pengumuman"`
+	IDGuru       int64  `json:"id_guru" db:"id_guru"`
+	NamaGuru     string `json:"nama_guru" db:"nama_guru"`
+	Judul        string `json:"judul" db:"judul"`
+	Media        string `json:"media" db:"media"`
+	WaktuUnggah  string `json:"waktu_unggah" db:"waktu_unggah"`
+	Deskripsi    string `json:"deskripsi" db:"deskripsi"`
+	CreatedAt    string `json:"created_at" db:"created_at"`
+	UpdatedAt    string `json:"updated_at" db:"updated_at"`
 }
 
 // Perkembangan model untuk development tracking

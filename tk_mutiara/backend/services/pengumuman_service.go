@@ -1,40 +1,17 @@
 package services
 
 import (
-	"strconv"
+	"database/sql"
 	"tk_mutiara_backend/models"
 	"tk_mutiara_backend/repository"
 )
 
-// PengumumanService interface untuk service methods
-type PengumumanService struct {
-	repo repository.PengumumanRepository
+// GetAllPengumuman mengambil semua pengumuman dari service layer
+func GetAllPengumuman(db *sql.DB) ([]models.Pengumuman, error) {
+	return repository.GetAllPengumuman(db)
 }
 
-// NewPengumumanService membuat instance baru
-func NewPengumumanService(repo repository.PengumumanRepository) *PengumumanService {
-	return &PengumumanService{repo: repo}
-}
-
-// GetAll mengambil semua pengumuman
-func (s *PengumumanService) GetAll() ([]models.Pengumuman, error) {
-	return s.repo.GetAll()
-}
-
-// GetByID mengambil pengumuman berdasarkan ID
-func (s *PengumumanService) GetByID(id string) (*models.Pengumuman, error) {
-	intID, err := strconv.Atoi(id)
-	if err != nil {
-		return nil, err
-	}
-	return s.repo.GetByID(intID)
-}
-
-// MarkAsRead menandai pengumuman sebagai sudah dibaca
-func (s *PengumumanService) MarkAsRead(id string) error {
-	intID, err := strconv.Atoi(id)
-	if err != nil {
-		return err
-	}
-	return s.repo.MarkAsRead(intID)
+// GetPengumumanByID mengambil pengumuman berdasarkan ID dari service layer
+func GetPengumumanByID(db *sql.DB, id int64) (models.Pengumuman, error) {
+	return repository.GetPengumumanByID(db, id)
 }

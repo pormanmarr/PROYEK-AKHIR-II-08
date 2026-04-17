@@ -28,9 +28,7 @@ class _DashboardScreenState extends State<DashboardScreen>
   late Animation<double> _fadeAnim;
 
   final List<PembayaranModel> _payments = PembayaranModel.dummyHistory();
-  final List<PengumumanModel> _pengumuman = PengumumanModel.dummyData();
-
-  int get _unreadPengumuman => _pengumuman.where((p) => !p.isRead).length;
+  List<PengumumanModel> _pengumuman = [];
 
   PembayaranModel? get _tagihan =>
       _payments.firstWhere((p) => p.isBelum, orElse: () => _payments.first);
@@ -48,6 +46,9 @@ class _DashboardScreenState extends State<DashboardScreen>
       _inisial = (names.map((n) => n[0]).join('').toUpperCase());
       print('✓ Dashboard loaded for: $_namaAnak (Inisial: $_inisial)');
     }
+    
+    // Load pengumuman dari API
+    _loadPengumuman();
     
     _animController = AnimationController(
       vsync: this,
@@ -70,6 +71,21 @@ class _DashboardScreenState extends State<DashboardScreen>
     );
 
     _animController.forward();
+  }
+
+  void _loadPengumuman() async {
+    try {
+      final data = await ApiService.getPengumuman();
+      setState(() {
+        _pengumuman = data.take(5).toList(); // Ambil 5 terbaru
+      });
+    } catch (e) {
+      print('Error loading pengumuman: $e');
+      // Jika error, gunakan dummy data
+      setState(() {
+        _pengumuman = PengumumanModel.dummyData();
+      });
+    }
   }
 
   @override
@@ -200,8 +216,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                         GestureDetector(
                           onTap: () => Navigator.push(
                             context,
-                            _pageRoute(
-                                PengumumanScreen(pengumuman: _pengumuman)),
+                          _pageRoute(const PengumumanScreen()),
                           ),
                           child: Text(
                             'Lihat Semua',
@@ -414,20 +429,20 @@ class _DashboardScreenState extends State<DashboardScreen>
   // ITEM PENGUMUMAN
   // =============================================
   Widget _buildPengumumanItem(PengumumanModel p) {
-    final colors = {
-      'penting': const Color(0xFFEF4444),
-      'kegiatan': const Color(0xFF6366F1),
-      'info': const Color(0xFF22C55E),
-    };
-    final color = colors[p.kategori] ?? AppTheme.primary;
+    final colors = [
+      const Color(0xFFEF4444), // Red
+      const Color(0xFF6366F1), // Indigo
+      const Color(0xFF22C55E), // Green
+      const Color(0xFFF59E0B), // Amber
+      const Color(0xFF06B6D4), // Cyan
+    ];
+    // Gunakan hash dari judul untuk warna konsisten
+    final color = colors[p.idPengumuman % colors.length];
 
     return GestureDetector(
       onTap: () => Navigator.push(
         context,
-        _pageRoute(PengumumanScreen(
-          pengumuman: _pengumuman,
-          selectedId: p.id,
-        )),
+        _pageRoute(PengumumanScreen(idPengumuman: p.idPengumuman)),
       ),
       child: Container(
         margin: const EdgeInsets.only(bottom: 12),
@@ -452,37 +467,19 @@ class _DashboardScreenState extends State<DashboardScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      if (!p.isRead)
-                        Container(
-                          width: 7,
-                          height: 7,
-                          margin: const EdgeInsets.only(right: 6),
-                          decoration: BoxDecoration(
-                            color: color,
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                      Expanded(
-                        child: Text(
-                          p.judul,
-                          style: TextStyle(
-                            color: AppTheme.textDark,
-                            fontSize: 13,
-                            fontWeight: p.isRead
-                                ? FontWeight.w600
-                                : FontWeight.w800,
-                          ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                    ],
+                  Text(
+                    p.judul,
+                    style: const TextStyle(
+                      color: AppTheme.textDark,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w800,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    p.isi,
+                    p.deskripsi,
                     style: const TextStyle(
                       color: AppTheme.textMedium,
                       fontSize: 11,
@@ -493,7 +490,7 @@ class _DashboardScreenState extends State<DashboardScreen>
                   ),
                   const SizedBox(height: 6),
                   Text(
-                    p.tanggal,
+                    p.namaGuru.isNotEmpty ? 'Dari ${p.namaGuru}' : 'Dari Admin',
                     style: TextStyle(
                       color: color,
                       fontSize: 11,

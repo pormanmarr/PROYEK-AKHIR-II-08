@@ -5,7 +5,8 @@ import '../models/pengumuman_model.dart';
 import '../models/perkembangan_model.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://192.168.90.220:8081';  
+  static const String baseUrl = 'http://192.168.90.220:8081';  // disesuaikan sama ipv4 masing-masing
+  static const String imageBaseUrl = 'http://192.168.90.220:8000';  // ini port untuk gambar, disesuaikan sama ipv4 masing-masing
 
   // Simpan token & user data setelah login
   static String? _token;
@@ -82,19 +83,37 @@ class ApiService {
   // PENGUMUMAN
   static Future<List<PengumumanModel>> getPengumuman() async {
     try {
+      print('=== GET PENGUMUMAN ===');
+      print('Token: $_token');
+      print('URL: $baseUrl/api/pengumuman');
+      
       final res = await http.get(
-        Uri.parse('$baseUrl/pengumuman'),
+        Uri.parse('$baseUrl/api/pengumuman'),
         headers: _headers,
+      ).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => throw Exception('Request timeout'),
       );
+
+      print('Status: ${res.statusCode}');
+      print('Body: ${res.body}');
 
       if (res.statusCode == 200) {
         final List data = jsonDecode(res.body);
-        return data.map((e) => PengumumanModel.fromJson(e)).toList();
+        print('Data count: ${data.length}');
+        
+        final result = data.map((e) => PengumumanModel.fromJson(e)).toList();
+        print('✓ Loaded ${result.length} pengumuman records');
+        return result;
       } else if (res.statusCode == 401) {
+        print('✗ Unauthorized - Token expired');
         throw Exception('Sesi habis, silakan login ulang');
+      } else {
+        print('✗ Error status: ${res.statusCode}');
+        throw Exception('Server error: ${res.statusCode}');
       }
-      return [];
     } catch (e) {
+      print('✗ Exception: $e');
       return PengumumanModel.dummyData();
     }
   }
