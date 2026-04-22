@@ -98,10 +98,16 @@ class _PengumumanScreenState extends State<PengumumanScreen> with TickerProvider
   String _getImageUrl(String mediaPath) {
     if (mediaPath.isEmpty) return '';
     
-    // Gunakan imageBaseUrl dari ApiService (konsisten dengan baseUrl untuk API)
+    // Check if media is already full URL (starts with http)
+    if (mediaPath.startsWith('http')) {
+      print('📸 Image URL (full): $mediaPath');
+      return mediaPath;
+    }
+    
+    // If only filename/path, prepend the base URL with storage path
     final url = '${ApiService.imageBaseUrl}/storage/$mediaPath';
     
-    print('📸 Image URL: $url');
+    print('📸 Image URL (constructed): $url');
     print('📸 Media Path: $mediaPath');
     return url;
   }

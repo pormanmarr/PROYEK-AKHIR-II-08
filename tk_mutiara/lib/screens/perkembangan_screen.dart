@@ -512,8 +512,15 @@ class _PerkembanganScreenState extends State<PerkembanganScreen> {
           ),
           const SizedBox(height: 16),
 
-          // List kategori details
-          ...data.kategoriDetails.map((kategori) => _buildKategoriItem(kategori)),
+          // List kategori details (fallback ke field kategori untuk data lama)
+          if (data.kategoriDetails.isNotEmpty)
+            ...data.kategoriDetails.map((kategori) => _buildKategoriItem(kategori))
+          else if (data.kategori.trim().isNotEmpty)
+            ...data.kategori
+                .split(',')
+                .map((k) => k.trim())
+                .where((k) => k.isNotEmpty)
+                .map((k) => _buildKategoriFallbackItem(k)),
 
           const SizedBox(height: 20),
           Container(
@@ -690,6 +697,26 @@ class _PerkembanganScreenState extends State<PerkembanganScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildKategoriFallbackItem(String namaKategori) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: const Color(0xFFFAFAFA),
+        border: Border.all(color: const Color(0xFFE5E5E5)),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        namaKategori,
+        style: const TextStyle(
+          color: AppTheme.textDark,
+          fontSize: 13,
+          fontWeight: FontWeight.w700,
+        ),
       ),
     );
   }

@@ -15,11 +15,17 @@ class TagihanApiController extends Controller
     public function index(Request $request)
     {
         try {
-            $request->validate([
-                'nomor_induk_siswa' => 'required|string|max:20',
-            ]);
+            // Support both query parameter dan request body
+            $nomor_induk_siswa = $request->query('nomor_induk_siswa') ?? $request->input('nomor_induk_siswa');
+            
+            if (!$nomor_induk_siswa) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'nomor_induk_siswa diperlukan'
+                ], 400);
+            }
 
-            $tagihan = Tagihan::where('nomor_induk_siswa', $request->nomor_induk_siswa)
+            $tagihan = Tagihan::where('nomor_induk_siswa', $nomor_induk_siswa)
                 ->with('siswa', 'siswa.kelas')
                 ->orderBy('id_tagihan', 'desc')
                 ->get()

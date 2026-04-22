@@ -11,10 +11,12 @@ class ApiService {
   // Simpan token & user data setelah login
   static String? _token;
   static Map<String, dynamic>? _user;
+  static String? _nomorIndukSiswa;
 
   // Getter untuk user data
   static Map<String, dynamic>? get userInfo => _user;
   static String? get token => _token;
+  static String? get nomorIndukSiswa => _nomorIndukSiswa;
 
   static Map<String, String> get _headers => {
         'Content-Type': 'application/json',
@@ -25,11 +27,11 @@ class ApiService {
   static Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       print('=== LOGIN REQUEST ===');
-      print('URL: $baseUrl/login');
+      print('URL: $baseUrl/api/login');
       print('Email: $email');
       
       final res = await http.post(
-        Uri.parse('$baseUrl/login'),
+        Uri.parse('$baseUrl/api/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}),
       ).timeout(
@@ -49,8 +51,10 @@ class ApiService {
       if (res.statusCode == 200 && data['success'] == true) {
         _token = data['token'];
         _user = data['user'];  // SAVE USER DATA
+        _nomorIndukSiswa = data['user']['nomor_induk_siswa'];  // SAVE NOMOR INDUK SISWA
         print('✓ Token saved: $_token');
         print('✓ User saved: $_user');
+        print('✓ Nomor Induk Siswa saved: $_nomorIndukSiswa');
         return {
           'success': true,
           'token': data['token'],
@@ -78,6 +82,7 @@ class ApiService {
   static void logout() {
     _token = null;
     _user = null;
+    _nomorIndukSiswa = null;
   }
 
   // PENGUMUMAN
@@ -123,10 +128,15 @@ class ApiService {
     try {
       print('=== GET PERKEMBANGAN ===');
       print('Token: $_token');
-      print('URL: $baseUrl/api/perkembangan');
+      print('Nomor Induk Siswa: $_nomorIndukSiswa');
+      print('URL: $baseUrl/api/perkembangan?nomor_induk_siswa=$_nomorIndukSiswa');
+      
+      if (_nomorIndukSiswa == null) {
+        throw Exception('Siswa belum login atau nomor_induk_siswa tidak tersimpan');
+      }
       
       final res = await http.get(
-        Uri.parse('$baseUrl/api/perkembangan'),
+        Uri.parse('$baseUrl/api/perkembangan?nomor_induk_siswa=$_nomorIndukSiswa'),
         headers: _headers,
       ).timeout(
         const Duration(seconds: 10),
@@ -148,8 +158,8 @@ class ApiService {
           print('✓ Loaded ${result.length} perkembangan records');
           return result;
         } else {
-          print('API error: ${decoded['error']}');
-          throw Exception('API error: ${decoded['error']}');
+          print('API error: ${decoded['message']}');
+          throw Exception('API error: ${decoded['message']}');
         }
       } else if (res.statusCode == 401) {
         print('✗ Unauthorized - Token expired');
@@ -167,20 +177,42 @@ class ApiService {
   // PEMBAYARAN
   static Future<List<PembayaranModel>> getPembayaran() async {
     try {
+      print('=== GET PEMBAYARAN (TAGIHAN) ===');
+      print('Nomor Induk Siswa: $_nomorIndukSiswa');
+      print('URL: $baseUrl/api/tagihan?nomor_induk_siswa=$_nomorIndukSiswa');
+      
+      if (_nomorIndukSiswa == null) {
+        throw Exception('Siswa belum login atau nomor_induk_siswa tidak tersimpan');
+      }
+
       final res = await http.get(
-        Uri.parse('$baseUrl/pembayaran'),
+        Uri.parse('$baseUrl/api/tagihan?nomor_induk_siswa=$_nomorIndukSiswa'),
         headers: _headers,
+      ).timeout(
+        const Duration(seconds: 10),
+        onTimeout: () => throw Exception('Request timeout'),
       );
 
+      print('Status: ${res.statusCode}');
+      print('Body: ${res.body}');
+
       if (res.statusCode == 200) {
-        final List data = jsonDecode(res.body);
-        return data.map((e) => PembayaranModel.fromJson(e)).toList();
+        final Map<String, dynamic> decoded = jsonDecode(res.body);
+        
+        if (decoded['status'] == 'success') {
+          final List data = decoded['data'] ?? [];
+          print('✓ Loaded ${data.length} tagihan records');
+          return data.map((e) => PembayaranModel.fromJson(e)).toList();
+        } else {
+          throw Exception(decoded['message'] ?? 'Error loading tagihan');
+        }
       } else if (res.statusCode == 401) {
         throw Exception('Sesi habis, silakan login ulang');
       }
       return [];
     } catch (e) {
-      return PembayaranModel.dummyHistory();
+      print('✗ Exception: $e');
+      return [];
     }
   }
 
