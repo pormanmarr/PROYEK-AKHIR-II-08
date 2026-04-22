@@ -180,37 +180,7 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
 
-        .search-container {
-            flex: 1;
-            max-width: 400px;
-            position: relative;
-        }
 
-        .search-container input {
-            width: 100%;
-            padding: 10px 15px 10px 40px;
-            border: 1px solid #e9ecef;
-            border-radius: 8px;
-            background-color: #f8f9fa;
-            font-size: 13px;
-            transition: all 0.3s ease;
-        }
-
-        .search-container input:focus {
-            outline: none;
-            background-color: #ffffff;
-            border-color: #fbb92f;
-            box-shadow: 0 0 8px rgba(251, 185, 47, 0.1);
-        }
-
-        .search-container i {
-            position: absolute;
-            left: 13px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #bdc3c7;
-            pointer-events: none;
-        }
 
         .navbar-right {
             display: flex;
@@ -219,34 +189,7 @@
             margin-left: 30px;
         }
 
-        .notification-icon {
-            position: relative;
-            font-size: 20px;
-            color: #636e72;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
 
-        .notification-icon:hover {
-            color: #fbb92f;
-            transform: scale(1.1);
-        }
-
-        .notification-badge {
-            position: absolute;
-            top: -5px;
-            right: -8px;
-            width: 18px;
-            height: 18px;
-            background-color: #fbb92f;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 11px;
-            font-weight: bold;
-            color: white;
-        }
 
         .user-profile {
             display: flex;
@@ -479,16 +422,7 @@
         <div class="main-content">
             <!-- Top Navbar -->
             <div class="top-navbar">
-                <div class="search-container">
-                    <i class="bi bi-search"></i>
-                    <input type="text" placeholder="Cari data...">
-                </div>
-
-                <div class="navbar-right">
-                    <div class="notification-icon">
-                        <i class="bi bi-bell"></i>
-                        <span class="notification-badge">1</span>
-                    </div>
+                <div class="navbar-right" style="margin-left: auto;">
 
                     <div class="user-profile-menu" style="position: relative;">
                         <div class="user-profile" onclick="toggleUserMenu()" style="display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 8px 12px; border-radius: 8px; transition: all 0.3s ease;">
