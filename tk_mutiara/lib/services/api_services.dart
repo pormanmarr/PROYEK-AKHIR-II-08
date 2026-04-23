@@ -6,8 +6,16 @@ import '../models/pengumuman_model.dart';
 import '../models/perkembangan_model.dart';
 
 class ApiService {
-  static const String baseUrl = 'http://192.168.98.220:8000';  // IP lokal dengan port 8000
-  static const String imageBaseUrl = 'http://192.168.98.220:8000';  // port 8000 untuk Laravel
+  // Override tanpa ubah source code:
+  // flutter run --dart-define=API_BASE_URL=http://<IP_LAPTOP>:8000
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://10.153.188.204:8000',
+  );
+  static const String imageBaseUrl = String.fromEnvironment(
+    'IMAGE_BASE_URL',
+    defaultValue: baseUrl,
+  );
 
   // Simpan token & user data setelah login
   static String? _token;
