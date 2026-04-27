@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../theme/app_theme.dart';
 import '../services/api_services.dart';
+import 'login_screen.dart';
 
 class ProfilScreen extends StatefulWidget {
   final Function(String nama, String email)? onProfilUpdated;
@@ -899,14 +900,10 @@ class _ProfilScreenState extends State<ProfilScreen>
           ),
           ElevatedButton(
             onPressed: () {
-              // ApiService.logout();
-              Navigator.of(context).pushAndRemoveUntil(
+              ApiService.logout();
+              Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
                 MaterialPageRoute(
-                  builder: (_) =>
-                      // Ganti dengan LoginScreen() kalau sudah aktif
-                      const Scaffold(
-                        body: Center(child: Text('Logout berhasil')),
-                      ),
+                  builder: (_) => const LoginScreen(),
                 ),
                 (route) => false,
               );

@@ -7,10 +7,11 @@ import '../models/perkembangan_model.dart';
 
 class ApiService {
   // Override tanpa ubah source code:
-  // flutter run --dart-define=API_BASE_URL=http://<IP_LAPTOP>:8000
+  // Android emulator: flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8081
+  // Device fisik (satu WiFi): flutter run --dart-define=API_BASE_URL=http://<IP_LAPTOP>:8081
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://10.153.188.204:8000',
+    defaultValue: 'http://10.153.188.204:8081',
   );
   static const String imageBaseUrl = String.fromEnvironment(
     'IMAGE_BASE_URL',
@@ -93,11 +94,11 @@ class ApiService {
   static Future<Map<String, dynamic>> login(String email, String password) async {
     try {
       print('=== LOGIN REQUEST ===');
-      print('URL: $baseUrl/api/login');
+      print('URL: $baseUrl/login');
       print('Email: $email');
       
       final res = await http.post(
-        Uri.parse('$baseUrl/api/login'),
+        Uri.parse('$baseUrl/login'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}),
       ).timeout(
