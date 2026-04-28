@@ -107,7 +107,7 @@
 <!-- Template Deskripsi Indikator -->
 <div class="card mb-4">
     <div class="card-header bg-light">
-        <h6 class="mb-0">Deskripsi Template Indikator</h6>
+        <h6 class="mb-0">Deskripsi Indikator</h6>
     </div>
     <div class="card-body">
         @php

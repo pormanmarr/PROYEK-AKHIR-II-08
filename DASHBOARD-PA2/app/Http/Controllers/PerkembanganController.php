@@ -127,6 +127,21 @@ class PerkembanganController extends Controller
 
         $validated = $request->validate($rules);
 
+        // Calculate average from nilai kategori and verify status_utama matches
+        $nilaiArray = [];
+        foreach ($kategoris as $kategori) {
+            $keyLower = strtolower($kategori);
+            $nilaiArray[] = (int)$validated['nilai_' . $keyLower];
+        }
+        
+        $average = array_sum($nilaiArray) / count($nilaiArray);
+        
+        // Verify status_utama is correct based on average
+        $expectedStatus = $this->calculateStatusFromAverage($average);
+        if ($statusUtama !== $expectedStatus) {
+            $statusUtama = $expectedStatus; // Auto-correct to expected status
+        }
+
         // Create main perkembangan record
         $templateDeskripsi = $this->getTemplateDeskripsi($statusUtama);
         $perkembangan = Perkembangan::create([
@@ -189,6 +204,19 @@ class PerkembanganController extends Controller
             'BSB' => 'Anak menunjukkan kemampuan yang sangat menonjol dalam aspek ini. Anak mampu melaksanakan tugas dengan sangat baik dan melampaui harapan.'
         ];
         return $templates[$status] ?? '';
+    }
+
+    private function calculateStatusFromAverage($average)
+    {
+        if ($average <= 3) {
+            return 'BB';
+        } elseif ($average <= 6) {
+            return 'MB';
+        } elseif ($average <= 8) {
+            return 'BSH';
+        } else {
+            return 'BSB';
+        }
     }
 
     public function show(Perkembangan $perkembangan)

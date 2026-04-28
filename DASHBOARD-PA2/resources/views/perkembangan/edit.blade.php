@@ -1089,84 +1089,7 @@
 
                     <div class="section-divider"></div>
 
-                    <!-- ===== SECTION 3: INDIKATOR CAPAIAN ===== -->
-                    <div class="form-section">
-                        <div class="section-title">
-                            <div class="section-title-icon"><i class="bi bi-graph-up"></i></div>
-                            Indikator Capaian Keseluruhan
-                        </div>
-
-                        <div class="status-pills-container">
-                            <div class="status-pill-wrapper">
-                                <input type="radio" class="status-pill-input status-radio" id="status_bb" 
-                                       name="status_utama" value="BB" {{ old('status_utama') == 'BB' ? 'checked' : '' }}>
-                                <label class="status-pill-label" for="status_bb">
-                                    <div class="status-badge status-badge-bb">BB</div>
-                                    <div class="status-pill-text">Belum Berkembang</div>
-                                </label>
-                            </div>
-
-                            <div class="status-pill-wrapper">
-                                <input type="radio" class="status-pill-input status-radio" id="status_mb" 
-                                       name="status_utama" value="MB" {{ old('status_utama') == 'MB' ? 'checked' : '' }}>
-                                <label class="status-pill-label" for="status_mb">
-                                    <div class="status-badge status-badge-mb">MB</div>
-                                    <div class="status-pill-text">Mulai Berkembang</div>
-                                </label>
-                            </div>
-
-                            <div class="status-pill-wrapper">
-                                <input type="radio" class="status-pill-input status-radio" id="status_bsh" 
-                                       name="status_utama" value="BSH" {{ old('status_utama') == 'BSH' ? 'checked' : '' }}>
-                                <label class="status-pill-label" for="status_bsh">
-                                    <div class="status-badge status-badge-bsh">BSH</div>
-                                    <div class="status-pill-text">Sesuai Harapan</div>
-                                </label>
-                            </div>
-
-                            <div class="status-pill-wrapper">
-                                <input type="radio" class="status-pill-input status-radio" id="status_bsb" 
-                                       name="status_utama" value="BSB" {{ old('status_utama') == 'BSB' ? 'checked' : '' }}>
-                                <label class="status-pill-label" for="status_bsb">
-                                    <div class="status-badge status-badge-bsb">BSB</div>
-                                    <div class="status-pill-text">Sangat Baik</div>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="template-description" id="template-deskripsi">
-                            <div class="template-description-label">
-                                <i class="bi bi-lightbulb"></i> Template Deskripsi
-                            </div>
-                            <p class="template-description-text" id="template-text"></p>
-                        </div>
-
-                        @error('status_utama')
-                            <div style="background: rgba(239, 68, 68, 0.1); border: 1.5px solid var(--danger-color); 
-                                        border-radius: 0.875rem; padding: 1rem; color: var(--danger-color); 
-                                        font-size: 0.9rem; margin-top: 1rem;">
-                                <i class="bi bi-exclamation-circle"></i> {{ $message }}
-                            </div>
-                        @enderror
-                    </div>
-
-                    <!-- DESKRIPSI TAMBAHAN -->
-                    <div style="margin-top: 1.5rem;">
-                        <label style="font-weight: 600; color: var(--neutral-900); margin-bottom: 0.75rem; display: block;">
-                            Deskripsi & Catatan Tambahan
-                        </label>
-                        <div class="textarea-wrapper">
-                            <textarea class="textarea-premium" id="deskripsi_tambahan" name="deskripsi_tambahan" 
-                                      placeholder="Tambahkan observasi khusus atau catatan penting tentang perkembangan siswa...">{{ old('deskripsi_tambahan') }}</textarea>
-                        </div>
-                        <div class="textarea-hint">
-                            <i class="bi bi-info-circle"></i> Opsional - Tuliskan detail khusus atau catatan penting
-                        </div>
-                    </div>
-
-                    <div class="section-divider"></div>
-
-                    <!-- ===== SECTION 4: KATEGORI PERKEMBANGAN ===== -->
+                    <!-- ===== SECTION 3: KATEGORI PERKEMBANGAN ===== -->
                     <div class="form-section">
                         <div class="section-title">
                             <div class="section-title-icon"><i class="bi bi-bar-chart"></i></div>
@@ -1264,6 +1187,80 @@
                             </div>
                         @enderror
                     </div>
+
+                    <div class="section-divider"></div>
+
+                    <!-- ===== SECTION 4: HASIL PERHITUNGAN OTOMATIS ===== -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <div class="section-title-icon"><i class="bi bi-calculator"></i></div>
+                            Hasil Perhitungan 
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, #E6F0FF 0%, #F0E6FF 100%); border: 2px solid #0066FF; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                                <!-- Rata-rata Nilai -->
+                                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; background: white; border-radius: 0.75rem; box-shadow: 0 2px 8px rgba(0, 102, 255, 0.1);">
+                                    <div style="font-size: 0.9rem; color: var(--neutral-600); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">
+                                        Rata-rata Nilai
+                                    </div>
+                                    <div id="average-display" style="font-size: 2rem; font-weight: 800; color: var(--primary-color); text-align: center;">
+                                        -
+                                    </div>
+                                    <div style="font-size: 0.8rem; color: var(--neutral-500); margin-top: 0.5rem;">
+                                        dari 10
+                                    </div>
+                                </div>
+
+                                <!-- Status Indikator -->
+                                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; background: white; border-radius: 0.75rem; box-shadow: 0 2px 8px rgba(0, 102, 255, 0.1);">
+                                    <div style="font-size: 0.9rem; color: var(--neutral-600); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">
+                                        Status Capaian
+                                    </div>
+                                    <div id="status-badge-display" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; border-radius: 0.625rem; font-weight: 700; font-size: 1rem; background: var(--neutral-200); color: var(--neutral-700);">
+                                        <i class="bi bi-dash"></i> Isi kategori terlebih dahulu
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Hidden input untuk status_utama (auto-filled) -->
+                        <input type="hidden" id="hidden_status_utama" name="status_utama">
+
+                        <div class="template-description" id="template-deskripsi" style="display: none;">
+                            <div class="template-description-label">
+                                <i class="bi bi-lightbulb"></i> Deskripsi
+                            </div>
+                            <p class="template-description-text" id="template-text"></p>
+                        </div>
+
+                        @error('status_utama')
+                            <div style="background: rgba(239, 68, 68, 0.1); border: 1.5px solid var(--danger-color); 
+                                        border-radius: 0.875rem; padding: 1rem; color: var(--danger-color); 
+                                        font-size: 0.9rem; margin-top: 1rem;">
+                                <i class="bi bi-exclamation-circle"></i> {{ $message }}
+                            </div>
+                        @enderror
+                    </div>
+
+                    <div class="section-divider"></div>
+
+                    <!-- ===== SECTION 5: DESKRIPSI TAMBAHAN ===== -->
+                    <div class="form-section">
+                        <div class="section-title">
+                            <div class="section-title-icon"><i class="bi bi-pencil-square"></i></div>
+                            Deskripsi & Catatan Tambahan
+                        </div>
+                        <div class="textarea-wrapper">
+                            <textarea class="textarea-premium" id="deskripsi_tambahan" name="deskripsi_tambahan" 
+                                      placeholder="Tambahkan observasi khusus atau catatan penting tentang perkembangan siswa...">{{ old('deskripsi_tambahan', $perkembangan->deskripsi_tambahan) }}</textarea>
+                        </div>
+                        <div class="textarea-hint">
+                            <i class="bi bi-info-circle"></i> Opsional - Tuliskan detail khusus atau catatan penting
+                        </div>
+                    </div>
+
+                    <div class="section-divider"></div>
 
                     <!-- ACTION BUTTONS -->
                     <div class="action-buttons">
@@ -1421,6 +1418,69 @@
                 }
             });
         }
+        
+        // Auto-calculate status
+        calculateAndUpdateStatus();
+    }
+
+    // Function to calculate average and auto-generate status
+    function calculateAndUpdateStatus() {
+        const akademikInput = document.getElementById('nilai_akademik');
+        const sosialInput = document.getElementById('nilai_sosial');
+        const emosionalInput = document.getElementById('nilai_emosional');
+
+        if (!akademikInput || !sosialInput || !emosionalInput) return;
+
+        const akademik = akademikInput.value ? parseInt(akademikInput.value) : null;
+        const sosial = sosialInput.value ? parseInt(sosialInput.value) : null;
+        const emosional = emosionalInput.value ? parseInt(emosionalInput.value) : null;
+
+        if (akademik === null || sosial === null || emosional === null) {
+            document.getElementById('average-display').textContent = '-';
+            document.getElementById('status-badge-display').innerHTML = '<i class="bi bi-dash"></i> Isi kategori terlebih dahulu';
+            document.getElementById('hidden_status_utama').value = '';
+            return;
+        }
+
+        const average = (akademik + sosial + emosional) / 3;
+        
+        let status, statusText, badgeColor;
+        if (average <= 3) {
+            status = 'BB';
+            statusText = 'Belum Berkembang';
+            badgeColor = '#EF4444';
+        } else if (average <= 6) {
+            status = 'MB';
+            statusText = 'Mulai Berkembang';
+            badgeColor = '#F59E0B';
+        } else if (average <= 8) {
+            status = 'BSH';
+            statusText = 'Berkembang Sesuai Harapan';
+            badgeColor = '#06B6D4';
+        } else {
+            status = 'BSB';
+            statusText = 'Berkembang Sangat Baik';
+            badgeColor = '#10B981';
+        }
+
+        document.getElementById('average-display').textContent = average.toFixed(2);
+        
+        const statusBadge = `
+            <i class="bi bi-check-circle-fill"></i> 
+            <span style="display: inline-block; padding: 0.25rem 0.75rem; background: ${badgeColor}15; color: ${badgeColor}; border-radius: 0.375rem; font-weight: 700; margin: 0 0.25rem;">
+                ${status}
+            </span> 
+            ${statusText}
+        `;
+        document.getElementById('status-badge-display').innerHTML = statusBadge;
+        document.getElementById('hidden_status_utama').value = status;
+
+        const templateDiv = document.getElementById('template-deskripsi');
+        const templateText = document.getElementById('template-text');
+        if (templateDescriptions[status]) {
+            templateText.textContent = templateDescriptions[status];
+            templateDiv.style.display = 'block';
+        }
     }
 
     // Kategori Checkbox Handler
@@ -1500,6 +1560,9 @@
                 initializeNilaiInput(kategoriLower);
             }
         });
+
+        // Calculate and display status on page load if values already exist
+        calculateAndUpdateStatus();
     });
 </script>
 @endsection
