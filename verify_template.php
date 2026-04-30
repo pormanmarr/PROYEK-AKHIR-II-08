@@ -1,6 +1,6 @@
 <?php
 $host = '192.168.90.220';
-$port = 8111;
+$port = 3307;
 $db = 'dashboard_pa2';
 $user = 'root';
 $pass = '';

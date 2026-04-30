@@ -3,7 +3,7 @@ $host = '192.168.90.220';
 $user = 'root';
 $pass = '';
 $db = 'dashboard_pa2';
-$port = 8111;
+$port = 3307;
 
 try {
     $conn = new mysqli($host, $user, $pass, $db, $port);
