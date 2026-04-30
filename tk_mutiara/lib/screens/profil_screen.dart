@@ -8,12 +8,14 @@ class ProfilScreen extends StatefulWidget {
   final Function(String nama, String email)? onProfilUpdated;
   final String namaAwal;
   final String emailAwal;
+  final String kelasAwal;
 
   const ProfilScreen({
     super.key,
     this.onProfilUpdated,
-  this.namaAwal = 'Bintang Mutiara',
-  this.emailAwal = 'anak@tkmutiara.com', 
+    this.namaAwal = 'Bintang Mutiara',
+    this.emailAwal = 'anak@tkmutiara.com', 
+    this.kelasAwal = 'Kelas A',
   });
 
   @override
@@ -514,20 +516,20 @@ class _ProfilScreenState extends State<ProfilScreen>
             ),
           ),
           const SizedBox(width: 14),
-          const Column(
+          Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Bintang Mutiara',
-                style: TextStyle(
+                widget.namaAwal,
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                 ),
               ),
               Text(
-                'Kelas A · TK Mutiara',
-                style: TextStyle(
+                '${widget.kelasAwal} · TK Mutiara',
+                style: const TextStyle(
                   color: Colors.white70,
                   fontSize: 12,
                   fontWeight: FontWeight.w500,

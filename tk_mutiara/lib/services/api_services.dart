@@ -10,7 +10,7 @@ class ApiService {
   // Device fisik (satu WiFi): flutter run --dart-define=API_BASE_URL=http://<IP_LAPTOP>:8081
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://10.153.188.204:8081',
+    defaultValue: 'http://192.168.39.220:8081',
   );
   static const String imageBaseUrl = String.fromEnvironment(
     'IMAGE_BASE_URL',

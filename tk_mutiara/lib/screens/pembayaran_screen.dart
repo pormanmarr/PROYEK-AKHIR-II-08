@@ -138,7 +138,7 @@ class _PembayaranScreenState extends State<PembayaranScreen>
 
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Transaksi dibuat. Lanjutkan pembayaran di Midtrans.'),
+          content: Text('Transaksi dibuat, silahkan lanjutkan pembayaran.'),
         ),
       );
 
@@ -235,7 +235,7 @@ class _PembayaranScreenState extends State<PembayaranScreen>
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-              'Status masih belum bayar. Selesaikan pembayaran di Midtrans dulu.',
+              'Status masih belum bayar. Selesaikan pembayaran terlebih dulu.',
             ),
           ),
         );
@@ -687,7 +687,7 @@ class _PembayaranScreenState extends State<PembayaranScreen>
           const SizedBox(width: 10),
           const Expanded(
             child: Text(
-              'Status pembayaran akan otomatis berubah menjadi lunas setelah webhook Midtrans diterima server.',
+              'Status pembayaran akan otomatis berubah menjadi lunas setelah pembayaran berhasil dilakukan.',
               style: TextStyle(
                 color: AppTheme.textDark,
                 fontSize: 12,

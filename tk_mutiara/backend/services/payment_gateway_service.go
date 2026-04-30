@@ -155,12 +155,44 @@ func requestMidtransSnap(payload midtransSnapRequest) (*midtransSnapResponse, er
 	return &parsed, nil
 }
 
-// HandleMidtransWebhook memproses notifikasi Midtrans dan update status pembayaran/tagihan.
-func HandleMidtransWebhook(db *sql.DB, payload *models.MidtransNotification) error {
-	if !isValidMidtransSignature(payload) {
-		return fmt.Errorf("signature key midtrans tidak valid")
+// fetchMidtransStatusAPI mengambil status pembayaran dari API Midtrans langsung
+func fetchMidtransStatusAPI(orderID string) (*models.MidtransNotification, error) {
+	baseURL := "https://api.sandbox.midtrans.com"
+	if strings.EqualFold(config.AppConfig.MidtransEnvironment, "production") {
+		baseURL = "https://api.midtrans.com"
 	}
 
+	req, err := http.NewRequest(http.MethodGet, baseURL+"/v2/"+orderID+"/status", nil)
+	if err != nil {
+		return nil, fmt.Errorf("gagal membuat request midtrans status: %w", err)
+	}
+
+	auth := base64.StdEncoding.EncodeToString([]byte(config.AppConfig.MidtransServerKey + ":"))
+	req.Header.Set("Authorization", "Basic "+auth)
+	req.Header.Set("Accept", "application/json")
+
+	client := &http.Client{Timeout: 15 * time.Second}
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, fmt.Errorf("gagal menghubungi midtrans status api: %w", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		respBytes, _ := io.ReadAll(resp.Body)
+		return nil, fmt.Errorf("midtrans API response %d: %s", resp.StatusCode, string(respBytes))
+	}
+
+	var parsed models.MidtransNotification
+	if err := json.NewDecoder(resp.Body).Decode(&parsed); err != nil {
+		return nil, fmt.Errorf("gagal parsing response midtrans status: %w", err)
+	}
+
+	return &parsed, nil
+}
+
+// processMidtransStatus berisi logika internal update database saat status Midtrans diterima
+func processMidtransStatus(db *sql.DB, payload *models.MidtransNotification) error {
 	rawPayload, _ := json.Marshal(payload)
 	if err := repository.UpdatePembayaranMidtransStatus(
 		db,
@@ -185,6 +217,15 @@ func HandleMidtransWebhook(db *sql.DB, payload *models.MidtransNotification) err
 	}
 
 	return nil
+}
+
+// HandleMidtransWebhook memproses notifikasi Midtrans dan update status pembayaran/tagihan.
+func HandleMidtransWebhook(db *sql.DB, payload *models.MidtransNotification) error {
+	if !isValidMidtransSignature(payload) {
+		return fmt.Errorf("signature key midtrans tidak valid")
+	}
+
+	return processMidtransStatus(db, payload)
 }
 
 func isValidMidtransSignature(payload *models.MidtransNotification) bool {
@@ -220,5 +261,24 @@ func GetPaymentStatusByTagihan(db *sql.DB, nomorIndukSiswa string, idTagihan int
 		return nil, fmt.Errorf("nomor induk siswa tidak valid")
 	}
 
-	return repository.GetPaymentStatusByTagihanAndSiswa(db, idTagihan, nomorIndukSiswa)
+	res, err := repository.GetPaymentStatusByTagihanAndSiswa(db, idTagihan, nomorIndukSiswa)
+	if err != nil {
+		return nil, err
+	}
+
+	// Cek status ke midtrans jika belum lunas dan punya order id
+	if res.StatusTagihan != "lunas" && res.OrderID != "" {
+		midtransStatus, errAPI := fetchMidtransStatusAPI(res.OrderID)
+		if errAPI == nil && midtransStatus != nil && midtransStatus.TransactionStatus != "" {
+			_ = processMidtransStatus(db, midtransStatus)
+			
+			// Ambil ulang status terbaru dari DB setelah di update
+			newRes, errDB := repository.GetPaymentStatusByTagihanAndSiswa(db, idTagihan, nomorIndukSiswa)
+			if errDB == nil {
+				return newRes, nil
+			}
+		}
+	}
+
+	return res, nil
 }

@@ -22,6 +22,7 @@ class _DashboardScreenState extends State<DashboardScreen>
 
   String _namaAnak = 'Bintang Mutiara';
   String _inisial = 'BM';
+  String _kelas = 'Kelas A';
 
   late AnimationController _animController;
   late List<Animation<Offset>> _slideAnims;
@@ -46,10 +47,11 @@ class _DashboardScreenState extends State<DashboardScreen>
     final userInfo = ApiService.userInfo;
     if (userInfo != null) {
       _namaAnak = userInfo['nama_siswa'] ?? 'User';
+      _kelas = userInfo['kelas'] ?? 'Kelas A';
       // Buat inisial dari nama
       final names = _namaAnak.split(' ');
       _inisial = (names.map((n) => n[0]).join('').toUpperCase());
-      print('✓ Dashboard loaded for: $_namaAnak (Inisial: $_inisial)');
+      print('✓ Dashboard loaded for: $_namaAnak (Inisial: $_inisial, Kelas: $_kelas)');
     }
     
     // Load pengumuman dari API
@@ -322,9 +324,9 @@ class _DashboardScreenState extends State<DashboardScreen>
                   ),
                 ),
                 const SizedBox(height: 4),
-                const Text(
-                  'Kelas A · TK Mutiara',
-                  style: TextStyle(
+                Text(
+                  '$_kelas · TK Mutiara',
+                  style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 13,
                   ),
@@ -419,6 +421,7 @@ class _DashboardScreenState extends State<DashboardScreen>
         _pageRoute(ProfilScreen(
           namaAwal: _namaAnak,
           emailAwal: 'anak@tkmutiara.com',
+          kelasAwal: _kelas,
           onProfilUpdated: (nama, email) {
             setState(() {
               _namaAnak = nama;
