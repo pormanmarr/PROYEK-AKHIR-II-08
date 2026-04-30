@@ -29,22 +29,12 @@
 
     .premium-header {
         margin-bottom: 2rem;
-        animation: slideDown 0.5s ease-out;
-    }
-
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--neutral-200);
     }
 
     .premium-header h1 {
-        font-size: 2rem;
+        font-size: 1.75rem;
         font-weight: 700;
         color: var(--neutral-900);
         margin: 0;
@@ -54,37 +44,13 @@
     }
 
     .premium-header .breadcrumb-text {
-        color: var(--neutral-600);
+        color: var(--neutral-500);
         font-size: 0.95rem;
         margin-top: 0.5rem;
     }
 
-    .premium-card {
-        background: white;
-        border: 1px solid var(--neutral-200);
-        border-radius: 1rem;
-        box-shadow: var(--shadow-lg);
-        overflow: hidden;
-        animation: fadeIn 0.6s ease-out;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .premium-card-body {
-        padding: 3rem;
-    }
-
     .form-section {
-        margin-bottom: 2.5rem;
+        margin-bottom: 2rem;
     }
 
     .form-section:last-child {
@@ -138,22 +104,21 @@
 
     .form-control {
         width: 100%;
-        padding: 0.875rem 1rem;
-        border: 1.5px solid var(--neutral-300);
-        border-radius: 0.75rem;
-        font-size: 1rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--neutral-300);
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
         color: var(--neutral-900);
-        background: white;
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         font-family: inherit;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        background: var(--neutral-50);
     }
 
     .form-control:focus {
         outline: none;
         border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px var(--primary-light);
         background: white;
+        box-shadow: 0 0 0 3px var(--primary-light);
     }
 
     .form-control::placeholder {
@@ -200,17 +165,17 @@
         display: flex;
         gap: 1rem;
         margin-top: 2.5rem;
-        padding-top: 2rem;
+        padding-top: 1.5rem;
         border-top: 1px solid var(--neutral-200);
     }
 
     .btn-premium {
-        padding: 0.875rem 2rem;
-        border-radius: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
         font-weight: 600;
         font-size: 0.95rem;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.2s ease;
         border: none;
         display: inline-flex;
         align-items: center;
@@ -219,50 +184,38 @@
     }
 
     .btn-save {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        background: var(--primary-color);
         color: white;
-        box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4), 0 0 1px rgba(249, 115, 22, 0.5);
+        border: 1px solid var(--primary-color);
     }
 
     .btn-save:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 32px rgba(249, 115, 22, 0.5), 0 0 2px rgba(249, 115, 22, 0.6);
-    }
-
-    .btn-save:active {
-        transform: translateY(0);
+        background: #ea580c;
+        border-color: #ea580c;
     }
 
     .btn-cancel {
         background: white;
-        color: var(--neutral-600);
-        border: 2px solid var(--neutral-300);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        color: var(--neutral-700);
+        border: 1px solid var(--neutral-300);
     }
 
     .btn-cancel:hover {
-        background: var(--neutral-100);
-        border-color: var(--neutral-400);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-
-    .btn-cancel:active {
-        transform: translateY(0);
+        background: var(--neutral-50);
+        color: var(--neutral-900);
     }
 </style>
 
 <div class="page-wrapper">
-    <div style="max-width: 900px; margin: 0 auto; padding: 0 1.5rem;">
+    <div class="container-lg" style="max-width: 1000px; margin: 0 auto;">
         <div class="premium-header">
             <h1><i class="bi bi-person-plus-fill"></i> Tambah Siswa Baru</h1>
             <p class="breadcrumb-text">Isi form di bawah untuk menambahkan siswa baru ke dalam sistem</p>
         </div>
 
-        <div class="premium-card">
-            <div class="premium-card-body">
-                <form action="{{ route('siswa.store') }}" method="POST" id="form-siswa">
-                    @csrf
+        <!-- MAIN FORM -->
+        <form action="{{ route('siswa.store') }}" method="POST" id="form-siswa">
+            @csrf
 
                     <!-- Bagian 1: Informasi Dasar -->
                     <div class="form-section">
@@ -360,18 +313,16 @@
                         </div>
                     </div>
 
-                    <!-- Action Buttons -->
-                    <div class="action-buttons">
-                        <button type="submit" class="btn-premium btn-save">
-                            <i class="bi bi-check-circle-fill"></i> Simpan Siswa
-                        </button>
-                        <a href="{{ route('siswa.index') }}" class="btn-premium btn-cancel">
-                            <i class="bi bi-x-lg"></i> Batal
-                        </a>
-                    </div>
-                </form>
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{{ route('siswa.index') }}" class="btn-premium btn-cancel">
+                    <i class="bi bi-x-lg"></i> Batal
+                </a>
+                <button type="submit" class="btn-premium btn-save">
+                    <i class="bi bi-check-circle"></i> Simpan Siswa
+                </button>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 

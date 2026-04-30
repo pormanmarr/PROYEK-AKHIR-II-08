@@ -10,7 +10,7 @@ class ApiService {
   // Device fisik (satu WiFi): flutter run --dart-define=API_BASE_URL=http://<IP_LAPTOP>:8081
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'http://192.168.233.130:8081',
+    defaultValue: 'http://192.168.39.220:8081',
   );
   static const String imageBaseUrl = String.fromEnvironment(
     'IMAGE_BASE_URL',
@@ -165,6 +165,33 @@ class ApiService {
     _token = null;
     _user = null;
     _nomorIndukSiswa = null;
+  }
+
+  // PROFILE
+  static Future<void> fetchProfile() async {
+    if (_token == null) return;
+    try {
+      final res = await http
+          .get(Uri.parse('$baseUrl/api/profile'), headers: _headers)
+          .timeout(const Duration(seconds: 10));
+
+      if (res.statusCode == 200) {
+        final decoded = jsonDecode(res.body);
+        if (_isSuccess(decoded)) {
+          final envelope = _extractEnvelope(decoded);
+          final profileData = _asMap(envelope['data']);
+          if (profileData != null) {
+            _user = {
+              ...?_user,
+              ...profileData,
+              'kelas': profileData['nama_kelas'] ?? profileData['kelas'] ?? _user?['kelas'],
+            };
+          }
+        }
+      }
+    } catch (e) {
+      print('Error fetching profile: $e');
+    }
   }
 
   // PENGUMUMAN

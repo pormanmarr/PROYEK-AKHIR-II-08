@@ -89,14 +89,19 @@ func LoginHandler(c *gin.Context) {
 	if userRole == "orangtua" {
 		// Get siswa data
 		queryChild := `
-			SELECT s.nomor_induk_siswa, s.nama_siswa, s.nama_orgtua, k.nama_kelas
+			SELECT s.nomor_induk_siswa, s.nama_siswa, s.nama_orgtua, k.nama_kelas, g.nama_guru
 			FROM siswa s
 			JOIN kelas k ON s.id_kelas = k.id_kelas
+			LEFT JOIN guru g ON k.id_guru = g.id_guru
 			WHERE s.nomor_induk_siswa = ?
 		`
+		var namaGuru sql.NullString
 		err := config.DB.QueryRow(queryChild, nomorIndukSiswa.String).Scan(
-			&userData.NomorIndukSiswa, &userData.NamaSiswa, &userData.NamaOrtu, &userData.Kelas,
+			&userData.NomorIndukSiswa, &userData.NamaSiswa, &userData.NamaOrtu, &userData.Kelas, &namaGuru,
 		)
+		if namaGuru.Valid {
+			userData.NamaGuru = namaGuru.String
+		}
 		if err != nil {
 			// Optional profile enrichment failure should not block login.
 		}

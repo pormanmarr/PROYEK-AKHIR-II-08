@@ -360,7 +360,7 @@ body {
                 </div>
 
                 <div class="login-footer">
-                    <p>&copy; 2026 School Monitor - Early Childhood Education Dashboard</p>
+                    <p>&copy; 2026 Dashboard - TK Swasta Mutiara Balige</p>
                 </div>
             </div>
         </section>

@@ -1,3 +1,5 @@
+import '../services/api_services.dart';
+
 class PembayaranModel {
   final int idTagihan;
   final String nomorIndukSiswa;
@@ -39,8 +41,8 @@ class PembayaranModel {
           ? json['id_tagihan'] as int
           : int.tryParse((json['id_tagihan'] ?? '0').toString()) ?? 0,
       nomorIndukSiswa: (json['nomor_induk_siswa'] ?? '').toString(),
-      namaSiswa: (json['nama_siswa'] ?? '').toString(),
-      kelas: (json['kelas'] ?? '').toString(),
+      namaSiswa: (json['nama_siswa'] ?? json['nama_anak'] ?? ApiService.userInfo?['nama_siswa'] ?? '').toString(),
+      kelas: (json['kelas'] ?? ApiService.userInfo?['kelas'] ?? '').toString(),
       jumlahTagihan: json['jumlah_tagihan'] is int
           ? json['jumlah_tagihan'] as int
           : ((json['jumlah_tagihan'] is double)

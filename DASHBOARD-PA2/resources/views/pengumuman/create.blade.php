@@ -26,22 +26,12 @@
 
     .premium-header {
         margin-bottom: 2rem;
-        animation: slideDown 0.5s ease-out;
-    }
-
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-20px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+        padding-bottom: 1rem;
+        border-bottom: 1px solid var(--neutral-200);
     }
 
     .premium-header h1 {
-        font-size: 2rem;
+        font-size: 1.75rem;
         font-weight: 700;
         color: var(--neutral-900);
         margin: 0;
@@ -51,36 +41,13 @@
     }
 
     .premium-header .breadcrumb-text {
-        color: #4B5563;
+        color: var(--neutral-500);
         font-size: 0.95rem;
         margin-top: 0.5rem;
     }
 
-    .premium-card {
-        background: white;
-        border: 1px solid var(--neutral-200);
-        border-radius: 1rem;
-        box-shadow: var(--shadow-lg);
-        animation: fadeIn 0.6s ease-out;
-    }
-
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-
-    .premium-card-body {
-        padding: 3rem;
-    }
-
     .form-section {
-        margin-bottom: 2.5rem;
+        margin-bottom: 2rem;
     }
 
     .form-section:last-child {
@@ -139,20 +106,20 @@
 
     .form-control {
         width: 100%;
-        padding: 0.875rem 1rem;
-        border: 1.5px solid var(--neutral-300);
-        border-radius: 0.75rem;
-        font-size: 1rem;
+        padding: 0.75rem 1rem;
+        border: 1px solid var(--neutral-300);
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
         color: var(--neutral-900);
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
         font-family: inherit;
-        background: white;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        background: var(--neutral-50);
     }
 
     .form-control:focus {
         outline: none;
         border-color: var(--primary-color);
+        background: white;
         box-shadow: 0 0 0 3px var(--primary-light);
     }
 
@@ -192,18 +159,18 @@
 
     .media-upload-area {
         position: relative;
-        border: 2px dashed var(--neutral-300);
-        border-radius: 0.875rem;
+        border: 1px dashed var(--neutral-300);
+        border-radius: 0.5rem;
         padding: 2.5rem;
         text-align: center;
-        background: linear-gradient(135deg, rgba(0, 102, 255, 0.02) 0%, rgba(16, 185, 129, 0.02) 100%);
-        transition: all 0.3s ease;
+        background: var(--neutral-50);
+        transition: all 0.2s ease;
         cursor: pointer;
     }
 
     .media-upload-area:hover {
         border-color: var(--primary-color);
-        background: linear-gradient(135deg, rgba(0, 102, 255, 0.08) 0%, rgba(16, 185, 129, 0.08) 100%);
+        background: white;
     }
 
     .media-upload-area input[type="file"] {
@@ -219,17 +186,17 @@
     .media-upload-area::before {
         content: '🖼️ Drag & drop foto di sini atau klik untuk memilih';
         display: block;
-        color: var(--neutral-600);
+        color: var(--neutral-500);
         font-weight: 500;
-        font-size: 1rem;
+        font-size: 0.95rem;
     }
 
     .media-preview {
-        margin-top: 1.5rem;
-        padding: 1.5rem;
+        margin-top: 1rem;
+        padding: 1rem;
         border: 1px solid var(--neutral-200);
-        border-radius: 0.875rem;
-        background: var(--neutral-100);
+        border-radius: 0.5rem;
+        background: var(--neutral-50);
         text-align: center;
     }
 
@@ -244,17 +211,17 @@
         display: flex;
         gap: 1rem;
         margin-top: 2.5rem;
-        padding-top: 2rem;
+        padding-top: 1.5rem;
         border-top: 1px solid var(--neutral-200);
     }
 
     .btn-premium {
-        padding: 0.875rem 2rem;
-        border-radius: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
         font-weight: 600;
         font-size: 0.95rem;
         cursor: pointer;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        transition: all 0.2s ease;
         border: none;
         display: inline-flex;
         align-items: center;
@@ -263,28 +230,25 @@
     }
 
     .btn-save {
-        background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+        background: var(--primary-color);
         color: white;
-        box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4), 0 0 1px rgba(249, 115, 22, 0.5);
+        border: 1px solid var(--primary-color);
     }
 
     .btn-save:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 12px 32px rgba(249, 115, 22, 0.5), 0 0 2px rgba(249, 115, 22, 0.6);
+        background: #ea580c;
+        border-color: #ea580c;
     }
 
     .btn-cancel {
         background: white;
-        color: #4B5563;
-        border: 2px solid var(--neutral-300);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        color: var(--neutral-700);
+        border: 1px solid var(--neutral-300);
     }
 
     .btn-cancel:hover {
-        background: var(--neutral-100);
-        border-color: var(--neutral-400);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        background: var(--neutral-50);
+        color: var(--neutral-900);
     }
 
     .btn-small {
@@ -294,16 +258,15 @@
 </style>
 
 <div class="page-wrapper">
-    <div style="max-width: 1000px; margin: 0 auto; padding: 0 1.5rem;">
+    <div class="container-lg" style="max-width: 1000px; margin: 0 auto;">
         <div class="premium-header">
             <h1><i class="bi bi-megaphone-fill"></i> Buat Pengumuman Baru</h1>
             <p class="breadcrumb-text">Buat dan publikasikan pengumuman untuk para orangtua/wali siswa</p>
         </div>
 
-        <div class="premium-card">
-            <div class="premium-card-body">
-                <form action="{{ route('pengumuman.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
+        <!-- MAIN FORM -->
+        <form action="{{ route('pengumuman.store') }}" method="POST" enctype="multipart/form-data">
+            @csrf
 
                     <!-- Bagian 1: Konten Pengumuman -->
                     <div class="form-section">
@@ -367,18 +330,16 @@
                     <!-- Hidden field untuk waktu_unggah -->
                     <input type="hidden" id="waktu_unggah" name="waktu_unggah" value="">
 
-                    <!-- Action Buttons -->
-                    <div class="action-buttons">
-                        <button type="submit" class="btn-premium btn-save">
-                            <i class="bi bi-check-circle-fill"></i> Publikasikan Pengumuman
-                        </button>
-                        <a href="{{ route('pengumuman.index') }}" class="btn-premium btn-cancel">
-                            <i class="bi bi-x-lg"></i> Batal
-                        </a>
-                    </div>
-                </form>
+            <!-- Action Buttons -->
+            <div class="action-buttons">
+                <a href="{{ route('pengumuman.index') }}" class="btn-premium btn-cancel">
+                    <i class="bi bi-x-lg"></i> Batal
+                </a>
+                <button type="submit" class="btn-premium btn-save">
+                    <i class="bi bi-check-circle"></i> Publikasikan Pengumuman
+                </button>
             </div>
-        </div>
+        </form>
     </div>
 </div>
 

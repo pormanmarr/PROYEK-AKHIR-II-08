@@ -97,16 +97,18 @@ func GetProfileHandler(c *gin.Context) {
 		var namaSiswa, namaOrtu, tglLahir, jenisKelamin, alamat string
 		var idKelas int
 		var namaKelas string
+		var namaGuru sql.NullString
 
 		querySiswa := `
-			SELECT s.nama_siswa, s.nama_orgtua, s.tgl_lahir, s.jenis_kelamin, s.alamat, s.id_kelas, k.nama_kelas
+			SELECT s.nama_siswa, s.nama_orgtua, s.tgl_lahir, s.jenis_kelamin, s.alamat, s.id_kelas, k.nama_kelas, g.nama_guru
 			FROM siswa s
 			JOIN kelas k ON s.id_kelas = k.id_kelas
+			LEFT JOIN guru g ON k.id_guru = g.id_guru
 			WHERE s.nomor_induk_siswa = ?
 		`
 
 		err := config.DB.QueryRow(querySiswa, nomorIndukSiswa.String).Scan(
-			&namaSiswa, &namaOrtu, &tglLahir, &jenisKelamin, &alamat, &idKelas, &namaKelas,
+			&namaSiswa, &namaOrtu, &tglLahir, &jenisKelamin, &alamat, &idKelas, &namaKelas, &namaGuru,
 		)
 
 		if err != nil && err != sql.ErrNoRows {
@@ -126,6 +128,7 @@ func GetProfileHandler(c *gin.Context) {
 			"alamat":            alamat,
 			"id_kelas":          idKelas,
 			"nama_kelas":        namaKelas,
+			"nama_guru":         namaGuru.String,
 		}
 	} else if userRole == "guru" {
 		// Get guru data

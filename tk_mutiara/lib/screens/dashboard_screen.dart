@@ -18,6 +18,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   String _namaAnak = 'Bintang';
+  String _kelas = 'Kelas A';
 
   List<PembayaranModel> _payments = [];
   List<PengumumanModel> _pengumuman = [];
@@ -37,9 +38,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final user = ApiService.userInfo;
     if (user != null) {
       _namaAnak = user['nama_siswa'].toString();
+      final className = user['kelas']?.toString() ?? 'Kelas A';
+      final guruName = user['nama_guru']?.toString() ?? 'Bu Wina';
+      _kelas = "$className - $guruName";
     }
 
     _loadData();
+    _syncProfile();
+  }
+
+  void _syncProfile() async {
+    await ApiService.fetchProfile();
+    if (mounted) {
+      final user = ApiService.userInfo;
+      if (user != null) {
+        setState(() {
+          _namaAnak = user['nama_siswa'].toString();
+          final className = user['nama_kelas']?.toString() ?? user['kelas']?.toString() ?? 'Kelas A';
+          final guruName = user['nama_guru']?.toString() ?? 'Bu Wina';
+          _kelas = "$className - $guruName";
+        });
+      }
+    }
   }
 
   void _loadData() async {
@@ -129,7 +149,7 @@ Widget build(BuildContext context) {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Halo, Bunda 👋",
+                  "Halo👋",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -177,15 +197,15 @@ Widget build(BuildContext context) {
                   ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Icon(
+                    children: [
+                      const Icon(
                         Icons.school,
                         size: 14,
                         color: Color(0xFFE57A32),
               ),
-                SizedBox(width: 5),
+                const SizedBox(width: 5),
                 Text(
-                  "Kelas Tulip - Bu Wina",
+                  _kelas,
                 style: TextStyle(
                     color: Color(0xFFE58A45),
                     fontSize: 12,
@@ -300,13 +320,13 @@ void _showSwitchAccount() {
                           ),
                         ),
                         const SizedBox(height: 3),
-                        const Row(
+                        Row(
                           children: [
-                            Icon(Icons.school,
+                            const Icon(Icons.school,
                                 size: 14, color: Color(0xFFE57A32)),
-                            SizedBox(width: 4),
+                            const SizedBox(width: 4),
                             Text(
-                              "Kelas Tulip - Bu Wina",
+                              _kelas,
                               style: TextStyle(
                                 fontSize: 11,
                                 color: Color(0xFFE57A32),

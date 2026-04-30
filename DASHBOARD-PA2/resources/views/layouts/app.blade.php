@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Dashboard') - School Monitor</title>
+    <title>@yield('title', 'Dashboard') - TK Swasta Mutiara Balige</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -15,8 +16,9 @@
         }
 
         body {
-            background-color: #FFFFFF;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #F8FAFC;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #0F172A;
         }
 
         .container-main {
@@ -26,14 +28,14 @@
 
         /* ===== SIDEBAR STYLING ===== */
         .sidebar {
-            width: 280px;
+            width: 260px;
             background-color: #FFFFFF;
             padding: 30px 0;
             position: fixed;
             height: 100vh;
             overflow-y: auto;
-            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
-            border-right: 1px solid #FFEDE3;
+            box-shadow: 4px 0 24px rgba(0, 0, 0, 0.02);
+            z-index: 100;
         }
 
         .sidebar-header {
@@ -43,10 +45,15 @@
         }
 
         .sidebar-header .logo-title {
-            font-size: 22px;
-            font-weight: 700;
-            color: #F97316;
+            font-size: 20px;
+            font-weight: 800;
+            color: #0F172A;
             margin-bottom: 5px;
+            letter-spacing: -0.5px;
+        }
+        
+        .sidebar-header .logo-title span {
+            color: #EA580C;
         }
 
         .nav-menu {
@@ -82,17 +89,15 @@
         }
 
         .nav-menu .nav-link:hover {
-            background-color: #FFEDE3;
-            color: #F97316;
-            padding-left: 22px;
+            background-color: #F1F5F9;
+            color: #EA580C;
         }
 
         .nav-menu .nav-link.active {
-            background: linear-gradient(135deg, #F97316 0%, #EA580C 100%);
-            color: #FFFFFF;
-            font-weight: 600;
+            background: rgba(234, 88, 12, 0.08);
+            color: #EA580C;
+            font-weight: 700;
             position: relative;
-            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
         }
 
         .nav-menu .nav-link.active::before {
@@ -103,7 +108,7 @@
             transform: translateY(-50%);
             width: 4px;
             height: 24px;
-            background: #FFFFFF;
+            background: #EA580C;
             border-radius: 0 4px 4px 0;
         }
 
@@ -158,17 +163,24 @@
         /* ===== MAIN CONTENT STYLING ===== */
         .main-content {
             flex: 1;
-            margin-left: 280px;
-            background-color: #FFFFFF;
+            margin-left: 260px;
+            background-color: transparent;
+            display: flex;
+            flex-direction: column;
         }
 
         .top-navbar {
-            background: white;
-            padding: 20px 35px;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 16px 35px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+            justify-content: flex-end;
+            border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
 
 
@@ -193,14 +205,14 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #F97316 0%, #FFEDE3 100%);
+            background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            color: #F97316;
+            color: #0F172A;
             font-size: 16px;
-            box-shadow: 0 2px 8px rgba(249, 115, 22, 0.2);
+            border: 1px solid #CBD5E1;
         }
 
         .user-info-text {
@@ -260,10 +272,11 @@
         }
 
         .page-title {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1A1A2E;
-            margin-bottom: 8px;
+            font-size: 28px;
+            font-weight: 800;
+            color: #0F172A;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
         }
 
         .page-subtitle {
@@ -347,18 +360,18 @@
         <!-- Sidebar -->
         <nav class="sidebar">
             <div class="sidebar-header">
-                <div class="logo-title">TK Swasta Mutiara Balige</div>
+                <div class="logo-title">TK Swasta Mutiara <span>Balige</span></div>
             </div>
 
             <ul class="nav-menu">
                 <li class="nav-item">
                     <a href="{{ route('dashboard') }}" class="nav-link {{ Route::currentRouteName() == 'dashboard' ? 'active' : '' }}">
-                        <i class="bi bi-grid-1x2-fill"></i> Dashboard
+                        <i class="bi bi-grid-1x2"></i> Dashboard
                     </a>
-                </li>
+                </li>   
                 <li class="nav-item">
                     <a href="{{ route('perkembangan.index') }}" class="nav-link {{ Route::currentRouteName() == 'perkembangan.index' ? 'active' : '' }}">
-                        <i class="bi bi-graph-up"></i> Data Perkembangan Anak
+                        <i class="bi bi-graph-up"></i> Perkembangan Siswa
                     </a>
                 </li>
                 <li class="nav-item">
@@ -376,24 +389,24 @@
                     @if (session('is_super_admin'))
                         <li class="nav-item">
                             <a href="{{ route('guru.index') }}" class="nav-link {{ Route::currentRouteName() == 'guru.index' ? 'active' : '' }}">
-                                <i class="bi bi-people-fill"></i> Data Guru
+                                <i class="bi bi-person-workspace"></i> Data Guru
                             </a>
                         </li>
                         <li class="nav-item">
                             <a href="{{ route('akun.index') }}" class="nav-link {{ Route::currentRouteName() == 'akun.index' ? 'active' : '' }}">
-                                <i class="bi bi-key-fill"></i> Kelola Akun
+                                <i class="bi bi-key"></i> Kelola Akun
                             </a>
                         </li>
                     @endif
 
                     <li class="nav-item">
                         <a href="{{ route('kelas.index') }}" class="nav-link {{ Route::currentRouteName() == 'kelas.index' ? 'active' : '' }}">
-                            <i class="bi bi-building"></i> Kelas
+                            <i class="bi bi-building"></i> Data Kelas
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="{{ route('tagihan.index') }}" class="nav-link {{ Route::currentRouteName() == 'tagihan.index' ? 'active' : '' }}">
-                            <i class="bi bi-file-earmark-text"></i> Tagihan
+                            <i class="bi bi-receipt"></i> Tagihan SPP
                         </a>
                     </li>
                 @endif

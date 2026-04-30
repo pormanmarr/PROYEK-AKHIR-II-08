@@ -67,32 +67,30 @@
         margin-top: 0.5rem;
     }
 
-    .premium-card {
-        background: white;
-        border: 1px solid var(--neutral-200);
-        border-radius: 1rem;
-        box-shadow: var(--shadow-lg);
-        overflow: hidden;
-        animation: fadeIn 0.6s ease-out;
+    .premium-header {
+        margin-bottom: 2.5rem;
+        padding-bottom: 1.5rem;
+        border-bottom: 1px solid var(--neutral-200);
     }
 
-    @keyframes fadeIn {
-        from {
-            opacity: 0;
-            transform: translateY(10px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
+    .premium-header h1 {
+        font-size: 1.75rem;
+        font-weight: 700;
+        color: var(--neutral-900);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
     }
 
-    .premium-card-body {
-        padding: 3rem;
+    .premium-header .breadcrumb-text {
+        color: var(--neutral-500);
+        font-size: 0.95rem;
+        margin-top: 0.5rem;
     }
 
     .form-section {
-        margin-bottom: 3rem;
+        margin-bottom: 3.5rem;
     }
 
     .form-section:last-child {
@@ -127,28 +125,29 @@
         font-size: 1rem;
     }
 
-    /* STUDENT SELECTION PREMIUM */
+    /* STUDENT SELECTION CLEAN */
     .student-search-wrapper {
         position: relative;
         margin-bottom: 1.5rem;
+        max-width: 500px;
     }
 
     .student-search-input {
         width: 100%;
-        padding: 0.75rem 1rem 0.75rem 2.75rem;
-        border: 1.5px solid var(--neutral-300);
-        border-radius: 0.875rem;
-        font-size: 1rem;
+        padding: 0.75rem 1rem 0.75rem 2.5rem;
+        border: 1px solid var(--neutral-300);
+        border-radius: 0.5rem;
+        font-size: 0.95rem;
         color: var(--neutral-900);
-        background: white;
-        transition: all 0.3s ease;
+        background: var(--neutral-50);
+        transition: all 0.2s ease;
     }
 
     .student-search-input:focus {
         outline: none;
         border-color: var(--primary-color);
-        box-shadow: 0 0 0 3px var(--primary-light);
         background: white;
+        box-shadow: 0 0 0 3px var(--primary-light);
     }
 
     .student-search-icon {
@@ -157,92 +156,71 @@
         top: 50%;
         transform: translateY(-50%);
         color: var(--neutral-400);
+        font-size: 0.9rem;
         pointer-events: none;
     }
 
     .student-cards-container {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-        gap: 1.25rem;
-        max-height: 700px;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 1rem;
+        max-height: 500px;
         overflow-y: auto;
-        padding: 0.5rem;
+        padding-right: 0.5rem;
         margin-bottom: 1.5rem;
     }
 
     .student-cards-container::-webkit-scrollbar {
-        width: 6px;
+        width: 4px;
     }
-
-    .student-cards-container::-webkit-scrollbar-track {
-        background: var(--neutral-100);
-        border-radius: 0.5rem;
-    }
-
     .student-cards-container::-webkit-scrollbar-thumb {
         background: var(--neutral-300);
-        border-radius: 0.5rem;
-    }
-
-    .student-cards-container::-webkit-scrollbar-thumb:hover {
-        background: var(--neutral-400);
+        border-radius: 4px;
     }
 
     .student-card {
         background: white;
-        border: 2px solid var(--neutral-200);
-        border-radius: 1rem;
-        padding: 1.25rem;
+        border: 1px solid var(--neutral-200);
+        border-radius: 0.75rem;
+        padding: 1rem;
         cursor: pointer;
         position: relative;
-        overflow: hidden;
-    }
-
-    .student-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 3px;
-        background: linear-gradient(90deg, var(--primary-color), var(--info-color));
-        opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: all 0.2s ease;
     }
 
     .student-card:hover {
         border-color: var(--neutral-300);
-        box-shadow: var(--shadow-md);
-        transform: translateY(-2px);
+        background: var(--neutral-50);
     }
 
     .student-card.selected {
         border-color: var(--primary-color);
         background: var(--primary-light);
-        box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
-    }
-
-    .student-card.selected::before {
-        opacity: 1;
     }
 
     .student-card-content {
         display: flex;
         gap: 1rem;
+        align-items: center;
     }
 
     .student-avatar {
-        width: 56px;
-        height: 56px;
-        border-radius: 0.875rem;
-        background: linear-gradient(135deg, var(--primary-color), var(--info-color));
-        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--neutral-100);
+        color: var(--neutral-600);
         display: flex;
         align-items: center;
         justify-content: center;
-        font-weight: 700;
-        font-size: 1.25rem;
+        font-weight: 600;
+        font-size: 1rem;
         flex-shrink: 0;
+    }
+    
+    .student-card.selected .student-avatar {
+        background: var(--primary-color);
+        color: white;
     }
 
     .student-info {
@@ -254,116 +232,90 @@
         font-weight: 600;
         color: var(--neutral-900);
         margin: 0;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.25rem;
         font-size: 0.95rem;
     }
 
     .student-meta {
-        font-size: 0.85rem;
-        color: var(--neutral-600);
-        margin: 0.25rem 0;
+        font-size: 0.8rem;
+        color: var(--neutral-500);
+        margin: 0;
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
     }
 
     .student-check {
-        position: absolute;
-        top: 1rem;
-        right: 1rem;
-        width: 24px;
-        height: 24px;
-        background: var(--success-color);
-        border-radius: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
+        color: var(--primary-color);
         opacity: 0;
-        transform: scale(0);
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
+        font-size: 1.25rem;
     }
 
     .student-card.selected .student-check {
         opacity: 1;
-        transform: scale(1);
     }
 
     .selected-student-badge {
         display: none;
-        background: linear-gradient(135deg, var(--primary-light), rgba(0, 102, 255, 0.05));
-        border: 1.5px solid var(--primary-color);
-        border-radius: 0.875rem;
-        padding: 1rem;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1rem;
+        background: var(--neutral-50);
+        border-radius: 0.5rem;
+        border: 1px solid var(--neutral-200);
         margin-bottom: 1.5rem;
-        animation: slideDown 0.3s ease-out;
+        width: fit-content;
     }
 
     .selected-student-badge.active {
-        display: block;
-    }
-
-    .selected-student-badge-content {
         display: flex;
-        align-items: center;
-        gap: 0.75rem;
     }
 
     .selected-student-badge-icon {
-        width: 36px;
-        height: 36px;
-        background: var(--primary-color);
-        border-radius: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 1rem;
+        color: var(--success-color);
+        font-size: 1.25rem;
     }
 
     .selected-student-badge-text {
-        flex: 1;
-    }
-
-    .selected-student-badge-label {
-        font-size: 0.875rem;
-        color: var(--neutral-600);
-        margin: 0;
+        font-size: 0.9rem;
+        color: var(--neutral-700);
     }
 
     .selected-student-badge-name {
-        font-size: 1rem;
         font-weight: 600;
         color: var(--neutral-900);
         margin: 0;
+        display: inline;
     }
 
-    /* PERIODE SECTION */
+    /* PERIODE SECTION CLEAN */
     .periode-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 1.5rem;
-        margin-bottom: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 0.5rem;
+        align-items: center;
     }
 
     .periode-item {
-        background: var(--neutral-100);
-        border: 1.5px solid var(--neutral-200);
-        border-radius: 0.875rem;
-        padding: 1.25rem;
-        text-align: center;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        background: var(--neutral-50);
+        padding: 0.5rem 1rem;
+        border-radius: 0.5rem;
+        border: 1px solid var(--neutral-200);
     }
 
     .periode-label {
         font-size: 0.85rem;
-        color: var(--neutral-600);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.5rem;
-        font-weight: 600;
+        color: var(--neutral-500);
     }
 
     .periode-value {
-        font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--primary-color);
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--neutral-900);
     }
 
     /* STATUS PILLS PREMIUM */
@@ -507,11 +459,11 @@
         margin-top: 0.5rem;
     }
 
-    /* KATEGORI CARDS */
+    /* KATEGORI ITEMS CLEAN */
     .kategori-cards-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
         margin-bottom: 1.5rem;
     }
 
@@ -525,79 +477,63 @@
 
     .kategori-card {
         background: white;
-        border: 2px solid var(--neutral-200);
-        border-radius: 1rem;
-        padding: 1.5rem;
+        border: 1px solid var(--neutral-200);
+        border-radius: 0.5rem;
+        padding: 1rem 1.25rem;
         cursor: pointer;
-        transition: all 0.3s ease;
-        position: relative;
-        overflow: hidden;
-        display: block;
-    }
-
-    .kategori-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        height: 4px;
-        background: linear-gradient(90deg, var(--primary-color), var(--info-color));
-        opacity: 0;
-        transition: opacity 0.3s ease;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
     .kategori-card:hover {
+        background: var(--neutral-50);
         border-color: var(--neutral-300);
-        box-shadow: var(--shadow-md);
-        transform: translateY(-2px);
     }
 
     .kategori-checkbox-input:checked + .kategori-card {
         border-color: var(--primary-color);
         background: var(--primary-light);
-        box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
-    }
-
-    .kategori-checkbox-input:checked + .kategori-card::before {
-        opacity: 1;
     }
 
     .kategori-card-header {
         display: flex;
         align-items: center;
-        justify-content: space-between;
-        margin-bottom: 1rem;
+        gap: 1rem;
+        margin: 0;
     }
 
     .kategori-title {
-        font-size: 1.1rem;
-        font-weight: 700;
+        font-size: 1rem;
+        font-weight: 600;
         color: var(--neutral-900);
+        margin: 0;
+    }
+    
+    .kategori-desc {
+        font-size: 0.85rem; 
+        color: var(--neutral-500); 
         margin: 0;
     }
 
     .kategori-check {
-        width: 24px;
-        height: 24px;
-        background: var(--success-color);
-        border-radius: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
+        color: var(--primary-color);
         opacity: 0;
-        transform: scale(0);
-        transition: all 0.3s ease;
+        transition: all 0.2s ease;
+        font-size: 1.25rem;
     }
 
     .kategori-checkbox-input:checked + .kategori-card .kategori-check {
         opacity: 1;
-        transform: scale(1);
     }
 
     .nilai-wrapper {
         display: none;
+        padding: 1rem 0 1.5rem 1.25rem;
+        border-left: 2px solid var(--neutral-200);
+        margin-left: 1.5rem;
+        margin-top: 0.5rem;
     }
 
     .kategori-checkbox-input:checked ~ .nilai-wrapper {
@@ -640,84 +576,56 @@
     }
 
     .rating-stars {
-        display: grid;
-        grid-template-columns: repeat(10, 1fr);
+        display: flex;
+        flex-wrap: wrap;
         gap: 0.5rem;
-        margin-top: 1.5rem;
-        margin-bottom: 1.5rem;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
     }
 
     .rating-star {
-        width: 100%;
-        aspect-ratio: 1;
-        border-radius: 0.65rem;
-        border: 2px solid var(--neutral-300);
+        width: 40px;
+        height: 40px;
+        border-radius: 0.5rem;
+        border: 1px solid var(--neutral-300);
         background: white;
         cursor: pointer;
         display: flex;
         align-items: center;
         justify-content: center;
         font-size: 0.95rem;
-        font-weight: 700;
-        color: var(--neutral-600);
-        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        font-weight: 500;
+        color: var(--neutral-700);
+        transition: all 0.2s ease;
     }
 
     .rating-star:hover {
         border-color: var(--primary-color);
-        background: var(--primary-light);
+        background: var(--neutral-50);
         color: var(--primary-color);
-        transform: translateY(-3px) scale(1.05);
-        box-shadow: 0 4px 12px rgba(0, 102, 255, 0.25);
-    }
-
-    .rating-star:active {
-        transform: translateY(-1px) scale(1.02);
     }
 
     .rating-star.active {
-        background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+        background: var(--primary-color);
         border-color: var(--primary-color);
         color: white;
-        box-shadow: 0 4px 15px rgba(0, 102, 255, 0.35);
-        font-weight: 800;
+        font-weight: 600;
     }
 
     .rating-stars-labels {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 0;
-        font-size: 0.7rem;
-        font-weight: 700;
-        color: var(--neutral-600);
-        text-align: center;
-        text-transform: uppercase;
-        letter-spacing: 0.4px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        color: var(--neutral-500);
         padding: 0 0.5rem;
+        max-width: 445px;
     }
 
     .rating-label-item {
-        padding: 0.5rem 0;
-        border-bottom: 1px dashed var(--neutral-300);
-    }
-
-    .rating-label-item:first-child {
-        grid-column: 1;
+        padding: 0;
+        border: none;
         text-align: center;
     }
-
-    .rating-label-item:nth-child(2) {
-        grid-column: 2;
-        text-align: center;
-    }
-
-    .rating-label-item:nth-child(3) {
-        grid-column: 3;
-        text-align: center;
-    }
-
-    .nilai-label {
 
     .nilai-scale {
         display: flex;
@@ -771,111 +679,49 @@
         box-shadow: 0 0 0 3px var(--primary-light);
     }
 
-    /* ACTION BUTTONS */
+    /* ACTION BUTTONS CLEAN */
     .action-buttons {
         display: flex;
         gap: 1rem;
-        margin-top: 2.5rem;
-        justify-content: flex-end;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--neutral-200);
     }
 
     .btn-premium {
-        padding: 1rem 2.5rem !important;
-        border: none !important;
-        border-radius: 0.875rem !important;
-        font-size: 1.05rem !important;
-        font-weight: 700 !important;
+        padding: 0.75rem 1.5rem !important;
+        border-radius: 0.5rem !important;
+        font-size: 0.95rem !important;
+        font-weight: 600 !important;
         cursor: pointer !important;
-        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) !important;
+        transition: all 0.2s ease !important;
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 0.625rem !important;
+        gap: 0.5rem !important;
         text-decoration: none !important;
-        letter-spacing: 0.5px !important;
-        position: relative !important;
-        overflow: hidden !important;
-        box-shadow: none !important;
-    }
-
-    .btn-premium::before {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.3);
-        transform: translate(-50%, -50%);
-        transition: width 0.5s, height 0.5s;
-        z-index: 0;
-    }
-
-    .btn-premium:hover::before {
-        width: 300px;
-        height: 300px;
     }
 
     .btn-save {
-        background: linear-gradient(135deg, #F97316 0%, #EA580C 100%) !important;
+        background: var(--primary-color) !important;
         color: white !important;
-        box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4), 0 0 1px rgba(249, 115, 22, 0.5) !important;
-        border: none !important;
-        position: relative;
-    }
-
-    .btn-save i {
-        font-size: 1.15rem;
-        transition: transform 0.3s ease;
-        position: relative;
-        z-index: 1;
+        border: 1px solid var(--primary-color) !important;
     }
 
     .btn-save:hover {
-        transform: translateY(-4px) !important;
-        box-shadow: 0 12px 32px rgba(249, 115, 22, 0.5), 0 0 2px rgba(249, 115, 22, 0.6) !important;
-    }
-
-    .btn-save:hover i {
-        transform: scale(1.15);
-    }
-
-    .btn-save:active {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 6px 16px rgba(249, 115, 22, 0.4) !important;
+        background: #ea580c !important; /* Tailwind orange-600 */
+        border-color: #ea580c !important;
     }
 
     .btn-cancel {
         background: white !important;
-        color: var(--neutral-600) !important;
-        border: 2px solid var(--neutral-300) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
-        position: relative;
-    }
-
-    .btn-cancel i {
-        font-size: 1rem;
-        transition: transform 0.3s ease;
-        position: relative;
-        z-index: 1;
+        color: var(--neutral-700) !important;
+        border: 1px solid var(--neutral-300) !important;
     }
 
     .btn-cancel:hover {
         background: var(--neutral-50) !important;
-        border-color: var(--neutral-400) !important;
-        color: var(--neutral-700) !important;
-        transform: translateY(-3px) !important;
-        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12) !important;
-    }
-
-    .btn-cancel:hover i {
-        transform: rotate(90deg);
-    }
-
-    .btn-cancel:active {
-        transform: translateY(-1px) !important;
-        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08) !important;
+        color: var(--neutral-900) !important;
     }
 
     /* EMPTY STATE */
@@ -963,11 +809,9 @@
             </div>
         </div>
 
-        <!-- MAIN FORM CARD -->
-        <div class="premium-card">
-            <div class="premium-card-body">
-                <form action="{{ route('perkembangan.store') }}" method="POST" id="form-perkembangan">
-                    @csrf
+        <!-- MAIN FORM -->
+        <form action="{{ route('perkembangan.store') }}" method="POST" id="form-perkembangan">
+            @csrf
 
                     <!-- ===== SECTION 1: PILIH SISWA ===== -->
                     <div class="form-section">
@@ -999,7 +843,7 @@
                                             <div class="student-info">
                                                 <p class="student-name">{{ $s->nama_siswa }}</p>
                                                 <div class="student-meta">ID: {{ $s->nomor_induk_siswa }}</div>
-                                                <div class="student-meta"><i class="bi bi-bookmark"></i> {{ $s->kelas->nama_kelas ?? '-' }}</div>
+                                                <div class="student-meta">{{ $s->kelas->nama_kelas ?? '-' }}</div>
                                             </div>
                                         </div>
                                         <div class="student-check">
@@ -1185,27 +1029,29 @@
                             Hasil Perhitungan Otomatis
                         </div>
 
-                        <div style="background: linear-gradient(135deg, #FFEDE3 0%, #FFF5F0 100%); border: 2px solid #F97316; border-radius: 1rem; padding: 1.5rem; margin-bottom: 1.5rem;">
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                        <div style="background: var(--neutral-50); border: 1px solid var(--neutral-200); border-radius: 0.5rem; padding: 1.5rem; margin-bottom: 1.5rem;">
+                            <div style="display: flex; gap: 1.5rem; align-items: center; justify-content: space-between; flex-wrap: wrap;">
                                 <!-- Rata-rata Nilai -->
-                                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; background: white; border-radius: 0.75rem; box-shadow: 0 2px 8px rgba(0, 102, 255, 0.1);">
-                                    <div style="font-size: 0.9rem; color: var(--neutral-600); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">
-                                        Rata-rata Nilai
+                                <div style="display: flex; gap: 1rem; align-items: center;">
+                                    <div style="font-size: 0.9rem; color: var(--neutral-500); font-weight: 600;">
+                                        Rata-rata Nilai:
                                     </div>
-                                    <div id="average-display" style="font-size: 2rem; font-weight: 800; color: var(--primary-color); text-align: center;">
-                                        -
-                                    </div>
-                                    <div style="font-size: 0.8rem; color: var(--neutral-500); margin-top: 0.5rem;">
-                                        dari 10
+                                    <div style="display: flex; align-items: baseline; gap: 0.25rem;">
+                                        <span id="average-display" style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">
+                                            -
+                                        </span>
+                                        <span style="font-size: 0.85rem; color: var(--neutral-500);">
+                                            / 10
+                                        </span>
                                     </div>
                                 </div>
 
                                 <!-- Status Indikator -->
-                                <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 1rem; background: white; border-radius: 0.75rem; box-shadow: 0 2px 8px rgba(0, 102, 255, 0.1);">
-                                    <div style="font-size: 0.9rem; color: var(--neutral-600); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.5rem;">
-                                        Status Capaian
+                                <div style="display: flex; gap: 1rem; align-items: center;">
+                                    <div style="font-size: 0.9rem; color: var(--neutral-500); font-weight: 600;">
+                                        Status Capaian:
                                     </div>
-                                    <div id="status-badge-display" style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; border-radius: 0.625rem; font-weight: 700; font-size: 1rem; background: var(--neutral-200); color: var(--neutral-700);">
+                                    <div id="status-badge-display" style="font-weight: 600; font-size: 0.95rem; color: var(--neutral-600);">
                                         <i class="bi bi-dash"></i> Isi kategori terlebih dahulu
                                     </div>
                                 </div>
@@ -1252,16 +1098,14 @@
 
                     <!-- ACTION BUTTONS -->
                     <div class="action-buttons">
-                        <a href="{{ route('perkembangan.index') }}" class="btn-premium btn-cancel" style="background: white !important; color: #4B5563 !important; border: 2px solid #E5E7EB !important; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important; padding: 1rem 2.5rem !important; border-radius: 0.875rem !important; font-size: 1.05rem !important; font-weight: 700 !important; cursor: pointer !important; text-decoration: none !important; display: inline-flex !important; align-items: center !important; gap: 0.625rem !important;">
+                        <a href="{{ route('perkembangan.index') }}" class="btn-premium btn-cancel">
                             <i class="bi bi-x-lg"></i> Batal
                         </a>
-                        <button type="submit" class="btn-premium btn-save" style="background: linear-gradient(135deg, #F97316 0%, #EA580C 100%) !important; color: white !important; box-shadow: 0 8px 24px rgba(249, 115, 22, 0.4), 0 0 1px rgba(249, 115, 22, 0.5) !important; border: none !important; padding: 1rem 2.5rem !important; border-radius: 0.875rem !important; font-size: 1.05rem !important; font-weight: 700 !important; cursor: pointer !important; display: inline-flex !important; align-items: center !important; gap: 0.625rem !important; position: relative !important;">
+                        <button type="submit" class="btn-premium btn-save">
                             <i class="bi bi-check-circle"></i> Simpan Perkembangan
                         </button>
                     </div>
                 </form>
-            </div>
-        </div>
     </div>
 </div>
 
@@ -1276,10 +1120,22 @@
 
     // Select Student Function
     function selectStudent(element) {
+        // Jika sudah terpilih, maka batalkan pilihan (toggle off)
+        if (element.classList.contains('selected')) {
+            element.classList.remove('selected');
+            document.getElementById('nomor_induk_siswa').value = '';
+            
+            const badge = document.getElementById('selected-student-badge');
+            badge.classList.remove('active');
+            return;
+        }
+
+        // Batalkan pilihan pada semua card lain
         document.querySelectorAll('.student-card').forEach(card => {
             card.classList.remove('selected');
         });
 
+        // Tandai card ini sebagai terpilih
         element.classList.add('selected');
 
         const wrapper = element.closest('.student-card-wrapper');
