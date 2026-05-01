@@ -59,7 +59,7 @@
                         <p class="stat-card-title">Pengumuman Aktif</p>
                         <h2 class="stat-card-value">{{ $pengumuman_active }}</h2>
                     </div>
-                    <div class="stat-card-icon icon-purple">
+                    <div class="stat-card-icon icon-yellow">
                         <i class="bi bi-megaphone"></i>
                     </div>
                 </div>
@@ -113,7 +113,7 @@
     /* Dashboard Asymmetric Layout */
     .dashboard-layout {
         display: grid;
-        grid-template-columns: 1fr 340px;
+        grid-template-columns: 1fr 450px;
         gap: 32px;
         align-items: start;
     }
@@ -126,7 +126,7 @@
 
     /* Page Header */
     .page-header {
-        margin-bottom: 30px;
+        margin-bottom: 40px;
     }
 
     /* Stats Grid */
@@ -143,16 +143,17 @@
     }
 
     /* Stat Cards */
-    .stat-card-item {
-        background: #FFFFFF;
-        border-radius: 16px;
-        padding: 24px;
-        border: 1px solid rgba(226, 232, 240, 0.6);
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-    }
+.stat-card-item {
+    background: #FFFFFF;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid rgba(226, 232, 240, 0.6);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08),
+                0 4px 8px rgba(0, 0, 0, 0.04);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
 
     .stat-card-item:hover {
         box-shadow: 0 12px 24px -4px rgba(0, 0, 0, 0.05);
@@ -174,7 +175,7 @@
     .stat-card-title {
         font-size: 13px;
         font-weight: 600;
-        color: #64748B;
+        color: #000000;
         text-transform: uppercase;
         letter-spacing: 0.5px;
         margin-bottom: 8px;
@@ -183,7 +184,7 @@
     .stat-card-value {
         font-size: 36px;
         font-weight: 800;
-        color: #0F172A;
+        color: #000000;
         margin: 0;
         line-height: 1.2;
         letter-spacing: -1px;
@@ -200,10 +201,10 @@
         font-size: 24px;
     }
 
-    .icon-emerald { background: rgba(16, 185, 129, 0.1); color: #10B981; }
+    .icon-emerald { background: rgba(34, 197, 94, 0.1); color: #22C55E; }
     .icon-blue { background: rgba(59, 130, 246, 0.1); color: #3B82F6; }
-    .icon-orange { background: rgba(234, 88, 12, 0.1); color: #EA580C; }
-    .icon-purple { background: rgba(139, 92, 246, 0.1); color: #8B5CF6; }
+    .icon-orange { background: rgba(249, 115, 22, 0.1); color: #F97316; }
+    .icon-yellow { background: rgba(255, 209, 102, 0.2); color: #E85000; }
 
     /* Activities Sidebar */
     .activities-wrapper {
@@ -224,15 +225,15 @@
     }
 
     .activities-title {
-        font-size: 16px;
+        font-size: 20px;
         font-weight: 700;
-        color: #0F172A;
+        color: #000000;
         margin: 0;
     }
 
     .activities-badge {
         background: #F1F5F9;
-        color: #64748B;
+        color: #000000;
         font-size: 11px;
         font-weight: 600;
         padding: 4px 8px;
@@ -259,23 +260,22 @@
         padding-bottom: 0;
     }
 
-    /* Glowing Dot Indicator */
     .glowing-dot {
         position: absolute;
         top: 0;
         left: -4px;
         width: 8px;
         height: 8px;
-        background-color: #EA580C;
+        background-color: #F97316;
         border-radius: 50%;
-        box-shadow: 0 0 8px rgba(234, 88, 12, 0.6);
+        box-shadow: 0 0 8px rgba(249, 115, 22, 0.6);
         animation: pulse-glow 2s infinite;
     }
 
     @keyframes pulse-glow {
-        0% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0.4); }
-        70% { box-shadow: 0 0 0 6px rgba(234, 88, 12, 0); }
-        100% { box-shadow: 0 0 0 0 rgba(234, 88, 12, 0); }
+        0% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.4); }
+        70% { box-shadow: 0 0 0 6px rgba(249, 115, 22, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(249, 115, 22, 0); }
     }
 
     .activity-avatar {
@@ -284,12 +284,12 @@
         border-radius: 10px;
         background: #F8FAFC;
         border: 1px solid #E2E8F0;
-        color: #475569;
+        color: #000000;
         display: flex;
         align-items: center;
         justify-content: center;
         font-weight: 700;
-        font-size: 14px;
+        font-size: 16px;
         flex-shrink: 0;
     }
 
@@ -301,14 +301,14 @@
     }
 
     .activity-text {
-        font-size: 13px;
-        color: #475569;
+        font-size: 14px;
+        color: #6B7280;
         line-height: 1.4;
     }
 
     .activity-name {
         font-weight: 600;
-        color: #0F172A;
+        color: #000000;
     }
 
     .activity-meta {
@@ -318,15 +318,15 @@
     }
 
     .activity-time {
-        font-size: 11px;
-        color: #94A3B8;
+        font-size: 12px;
+        color: #000000;
     }
 
     .activity-class {
-        font-size: 10px;
+        font-size: 12px;
         font-weight: 600;
-        color: #EA580C;
-        background: rgba(234, 88, 12, 0.1);
+        color: #F97316;
+        background: rgba(249, 115, 22, 0.1);
         padding: 2px 6px;
         border-radius: 4px;
     }
@@ -334,13 +334,16 @@
     .empty-state {
         text-align: center;
         padding: 40px 0;
-        color: #94A3B8;
+        color: #6B7280;
     }
 
     .empty-icon {
         font-size: 32px;
         margin-bottom: 8px;
-        color: #CBD5E1;
+        color:   #CBD5E1;
+    }
+    .page-subtitle {
+        color: #6B7280;
     }
 </style>
 @endsection

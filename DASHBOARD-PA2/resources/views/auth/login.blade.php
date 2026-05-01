@@ -108,14 +108,14 @@ body {
 .logo-icon {
     width: 64px;
     height: 64px;
-    background: linear-gradient(135deg, #fbb92f 0%, #ffd166 100%);
+    background: linear-gradient(135deg, #F97316 0%, #E85000 100%);
     border-radius: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 32px;
     color: #fff;
-    box-shadow: 0 14px 30px rgba(251, 185, 47, 0.28);
+    box-shadow: 0 14px 30px rgba(249, 115, 22, 0.28);
     margin-bottom: 22px;
 }
 
@@ -181,8 +181,8 @@ body {
 
 .form-control:focus {
     background: #ffffff;
-    border-color: #fbb92f;
-    box-shadow: 0 0 0 4px rgba(251, 185, 47, 0.14);
+    border-color: #F97316;
+    box-shadow: 0 0 0 4px rgba(249, 115, 22, 0.14);
 }
 
 /* ===== BUTTON ===== */
@@ -191,7 +191,7 @@ body {
     height: 52px;
     border: none;
     border-radius: 14px;
-    background: linear-gradient(135deg, #fbb92f 0%, #f59e0b 100%);
+    background: linear-gradient(135deg, #F97316 0%, #E85000 100%);
     color: white;
     font-weight: 700;
 }
@@ -236,7 +236,7 @@ body {
 }
 
 .toggle-password:hover {
-    color: #f59e0b;
+    color: #F97316;
 }
 
 /* Biar icon tidak nabrak text */

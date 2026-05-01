@@ -30,7 +30,7 @@
     }
 
     .btn-add {
-        background: #FF9800;
+        background: #F97316;
         color: white;
         padding: 0.75rem 1.5rem;
         border-radius: 0.75rem;
@@ -45,7 +45,7 @@
     }
 
     .btn-add:hover {
-        background: #F57C00;
+        background: #E85000;
         transform: translateY(-2px);
     }
 

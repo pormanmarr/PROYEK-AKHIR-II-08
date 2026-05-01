@@ -16,9 +16,10 @@
         }
 
         body {
-            background-color: #F8FAFC;
+            background-color: #FFEDE3;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            color: #0F172A;
+            color: #000000;
+            overflow-y: scroll;
         }
 
         .container-main {
@@ -39,28 +40,28 @@
         }
 
         .sidebar-header {
-            padding: 0 25px 40px;
+            padding: 0 25px 15px;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 15px;
         }
 
         .sidebar-header .logo-title {
             font-size: 20px;
             font-weight: 800;
-            color: #0F172A;
+            color: #000000;
             margin-bottom: 5px;
             letter-spacing: -0.5px;
         }
         
         .sidebar-header .logo-title span {
-            color: #EA580C;
+            color: #E85000;
         }
 
         .nav-menu {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
             padding: 0 15px;
             margin-bottom: 30px;
         }
@@ -89,13 +90,13 @@
         }
 
         .nav-menu .nav-link:hover {
-            background-color: #F1F5F9;
-            color: #EA580C;
+            background-color: #FFEDE3;
+            color: #E85000;
         }
 
         .nav-menu .nav-link.active {
-            background: rgba(234, 88, 12, 0.08);
-            color: #EA580C;
+            background: #FFEDE3;
+            color: #E85000;
             font-weight: 700;
             position: relative;
         }
@@ -108,7 +109,7 @@
             transform: translateY(-50%);
             width: 4px;
             height: 24px;
-            background: #EA580C;
+            background: #E85000;
             border-radius: 0 4px 4px 0;
         }
 
@@ -143,7 +144,7 @@
             justify-content: center;
             gap: 10px;
             padding: 12px;
-            background-color: #FFEBEE;
+            background-color: #FFEDE3;
             color: #EF4444;
             border: none;
             border-radius: 10px;
@@ -154,10 +155,10 @@
         }
 
         .logout-btn:hover {
-            background-color: #FFCDD2;
-            color: #DC2626;
+            background-color: rgba(239, 68, 68, 0.15);
+            color: #EF4444;
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.2);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
         }
 
         /* ===== MAIN CONTENT STYLING ===== */
@@ -205,14 +206,14 @@
             width: 40px;
             height: 40px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
+            background: linear-gradient(135deg, #FFEDE3 0%, #DADADA 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 700;
-            color: #0F172A;
+            color: #000000;
             font-size: 16px;
-            border: 1px solid #CBD5E1;
+            border: 1px solid #DADADA;
         }
 
         .user-info-text {
@@ -254,12 +255,12 @@
         }
 
         .dropdown-item-link:hover {
-            background-color: #FFF8F4 !important;
+            background-color: #FFEDE3 !important;
             padding-left: 20px;
         }
 
         .dropdown-item-link:last-child:hover {
-            background-color: #fff5f5 !important;
+            background-color: rgba(239, 68, 68, 0.05) !important;
         }
 
         /* ===== PAGE CONTENT ===== */
@@ -274,7 +275,7 @@
         .page-title {
             font-size: 28px;
             font-weight: 800;
-            color: #0F172A;
+            color: #000000;
             margin-bottom: 6px;
             letter-spacing: -0.5px;
         }
@@ -351,6 +352,24 @@
             .sidebar.active {
                 left: 0;
             }
+        }
+
+        /* ===== BUTTON OVERRIDES ===== */
+        .btn-primary {
+            background-color: #F97316;
+            border-color: #F97316;
+            color: #FFFFFF;
+        }
+        .btn-primary:hover, .btn-primary:focus, .btn-primary:active {
+            background-color: #E85000 !important;
+            border-color: #E85000 !important;
+            color: #FFFFFF !important;
+        }
+        .text-primary {
+            color: #F97316 !important;
+        }
+        .bg-primary {
+            background-color: #F97316 !important;
         }
     </style>
     @yield('styles')
@@ -492,7 +511,7 @@
             const dropdownItems = document.querySelectorAll('.dropdown-item-link');
             dropdownItems.forEach(item => {
                 item.addEventListener('mouseover', function() {
-                    this.style.backgroundColor = '#FFF8F4';
+                    this.style.backgroundColor = '#FFEDE3';
                 });
                 item.addEventListener('mouseout', function() {
                     this.style.backgroundColor = 'transparent';
