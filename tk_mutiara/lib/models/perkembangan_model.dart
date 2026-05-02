@@ -88,4 +88,19 @@ class PerkembanganModel {
       kategoriDetails: kategoris.map((k) => PerkembanganKategoriModel.fromJson(k)).toList(),
     );
   }
+
+int get nilaiChart {
+  switch (statusUtama) {
+    case "BB":
+      return 1;
+    case "MB":
+      return 2;
+    case "BSH":
+      return 3;
+    case "BSB":
+      return 4;
+    default:
+      return 0;
+  }
+}
 }

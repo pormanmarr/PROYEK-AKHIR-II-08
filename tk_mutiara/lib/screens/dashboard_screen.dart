@@ -8,6 +8,7 @@ import 'pembayaran_screen.dart';
 import 'pengumuman_screen.dart';
 import 'history_screen.dart';
 import 'login_screen.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -23,6 +24,20 @@ class _DashboardScreenState extends State<DashboardScreen> {
   List<PembayaranModel> _payments = [];
   List<PengumumanModel> _pengumuman = [];
   List<PerkembanganModel> _perkembanganData = [];
+
+ List<PerkembanganModel> _getDataPerTahun() {
+    if (_perkembanganData.isEmpty) return [];
+
+    final tahunTerbaru = _perkembanganData.last.tahun;
+
+    final dataTahun = _perkembanganData
+        .where((e) => e.tahun == tahunTerbaru)
+        .toList();
+
+    dataTahun.sort((a, b) => a.bulan.compareTo(b.bulan));
+
+    return dataTahun;
+  }
 
   PembayaranModel? get _tagihan {
     for (final p in _payments) {
@@ -149,7 +164,7 @@ Widget build(BuildContext context) {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  "Halo👋",
+                  "Halo Bunda👋",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 14,
@@ -291,61 +306,65 @@ void _showSwitchAccount() {
             const SizedBox(height: 18),
 
             // AKUN AKTIF
-            Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFFFF3E8),
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(color: const Color(0xFFE57A32)),
+GestureDetector(
+  onTap: () {
+    Navigator.pop(context); // tutup bottom sheet
+  },
+  child: Container(
+    padding: const EdgeInsets.all(12),
+    decoration: BoxDecoration(
+      color: const Color(0xFFFFF3E8),
+      borderRadius: BorderRadius.circular(14),
+      border: Border.all(color: const Color(0xFFE57A32)),
+    ),
+    child: Row(
+      children: [
+        const CircleAvatar(
+          radius: 22,
+          backgroundColor: Color(0xFFEFEFEF),
+          child: Icon(Icons.person, color: Colors.grey),
+        ),
+        const SizedBox(width: 12),
+
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                _namaAnak,
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 14,
+                ),
               ),
-              child: Row(
+              const SizedBox(height: 3),
+              Row(
                 children: [
-                  const CircleAvatar(
-                    radius: 22,
-                    backgroundColor: Color(0xFFEFEFEF),
-                    child: Icon(Icons.person, color: Colors.grey),
-                  ),
-
-                  const SizedBox(width: 12),
-
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _namaAnak,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(height: 3),
-                        Row(
-                          children: [
-                            const Icon(Icons.school,
-                                size: 14, color: Color(0xFFE57A32)),
-                            const SizedBox(width: 4),
-                            Text(
-                              _kelas,
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: Color(0xFFE57A32),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                  const Icon(Icons.school,
+                      size: 14, color: Color(0xFFE57A32)),
+                  const SizedBox(width: 4),
+                  Text(
+                    _kelas,
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: Color(0xFFE57A32),
                     ),
-                  ),
-
-                  const Icon(
-                    Icons.check_circle,
-                    color: Color(0xFFE57A32),
                   ),
                 ],
               ),
-            ),
+            ],
+          ),
+        ),
 
+        const Icon(
+          Icons.check_circle,
+          color: Color(0xFFE57A32),
+        ),
+      ],
+    ),
+  ),
+),
+        
             const SizedBox(height: 16),
 
             // TAMBAH AKUN
@@ -545,7 +564,10 @@ Widget _perkembangan() {
         borderRadius: BorderRadius.circular(20),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+
+          // 🔥 HEADER
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -560,65 +582,277 @@ Widget _perkembangan() {
                     child: const Icon(
                       Icons.show_chart,
                       color: Color(0xFFE58A45),
-                      size: 28,
+                      size: 24,
                     ),
                   ),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: 10),
+
                   const Text(
-                    "Lihat Perkembangan",
+                    "Perkembangan Anak",
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 18,
+                      fontSize: 16,
                     ),
                   ),
                 ],
               ),
+
               const Text(
-                "Lihat detail",
+                "Detail",
                 style: TextStyle(
                   color: Color(0xFFE58A45),
                   fontSize: 12,
                 ),
-              )
+              ),
             ],
           ),
-          const SizedBox(height: 14),
-         Row(
-  mainAxisAlignment: MainAxisAlignment.spaceAround,
-  children: [
-    _item(Icons.directions_run, "Motorik", getStatus("Motorik")),
-    _item(Icons.people, "Sosial", getStatus("Sosial")),
-    _item(Icons.psychology, "Kognitif", getStatus("Kognitif")),
-  ],
-),
+
+          const SizedBox(height: 8),
+
+          // 🔥 DESKRIPSI
+          const Text(
+            "Ringkasan perkembangan anak pada bulan ini",
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // 🔥 CHART DALAM KOTAK
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF7F2),
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: _buildChart(),
+          ),
         ],
       ),
     ),
   );
 }
 
-Widget _item(IconData icon, String title, String status) {
-  return Column(
-    children: [
-      CircleAvatar(
-        backgroundColor: Colors.white,
-        child: Icon(icon, color: Colors.orange),
-      ),
-      const SizedBox(height: 6),
-      Text(
-        title,
-        style: const TextStyle(
-          fontWeight: FontWeight.bold,
+Widget _buildChart() {
+  final data = _getDataPerTahun();
+
+  if (data.isEmpty) {
+    return const SizedBox(
+      height: 160,
+      child: Center(child: Text("Belum ada data")),
+    );
+  }
+
+  double convertNilai(String status) {
+    switch (status) {
+      case "BB":
+        return 1;
+      case "MB":
+        return 2;
+      case "BSH":
+        return 3;
+      case "BSB":
+        return 4;
+      default:
+        return 1;
+    }
+  }
+
+  String convertLabel(double value) {
+    switch (value.toInt()) {
+      case 1:
+        return "BB";
+      case 2:
+        return "MB";
+      case 3:
+        return "BSH";
+      case 4:
+        return "BSB";
+      default:
+        return "-";
+    }
+  }
+
+  const namaBulan = [
+    "", "Jan","Feb","Mar","Apr","Mei","Jun",
+    "Jul","Agu","Sep","Okt","Nov","Des"
+  ];
+
+  return SizedBox(
+    height: 170,
+    child: LineChart(
+      LineChartData(
+        minY: 1,
+        maxY: 4,
+
+        // 🔥 GRID
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: false,
+          horizontalInterval: 1,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: const Color(0xFFE58A45).withOpacity(0.15),
+              strokeWidth: 1,
+            );
+          },
         ),
-      ),
-      Text(
-        status,
-        style: const TextStyle(
-          color: Colors.green,
+
+        borderData: FlBorderData(show: false),
+
+        titlesData: FlTitlesData(
+          topTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          rightTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+
+          // 🔥 KIRI (STATUS)
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              interval: 1,
+              reservedSize: 45,
+              getTitlesWidget: (value, meta) {
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8),
+                  child: Text(
+                    convertLabel(value),
+                    style: const TextStyle(fontSize: 10),
+                  ),
+                );
+              },
+            ),
+          ),
+
+          // 🔥 BAWAH (BULAN)
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              interval: 1,
+              reservedSize: 30,
+              getTitlesWidget: (value, meta) {
+                final bulan = value.toInt() + 1;
+
+                if (bulan >= 1 && bulan <= 12) {
+                  return Padding(
+                    padding: const EdgeInsets.only(top: 6),
+                    child: Text(
+                      namaBulan[bulan],
+                      style: const TextStyle(fontSize: 10),
+                    ),
+                  );
+                }
+                return const Text("");
+              },
+            ),
+          ),
+        ),
+
+        // 🔥 TOOLTIP SESUAI PERMINTAAN
+        lineTouchData: LineTouchData(
+          handleBuiltInTouches: true,
+          touchTooltipData: LineTouchTooltipData(
+            tooltipRoundedRadius: 12,
+            tooltipPadding: const EdgeInsets.all(10),
+            tooltipMargin: 8,
+
+            // 🔥 FIX ERROR (WAJIB)
+            getTooltipColor: (touchedSpot) => Colors.white,
+
+           getTooltipItems: (spots) {
+  final latest = data.last; // 🔥 bulan terbaru dari admin
+
+  return spots.map((spot) {
+    final index = spot.x.toInt();
+    final item = data[index];
+
+    final isCurrentMonth =
+        item.bulan == latest.bulan && item.tahun == latest.tahun;
+
+    String label;
+    switch (item.statusUtama) {
+      case "BB":
+        label = "BB (Belum Berkembang)";
+        break;
+      case "MB":
+        label = "MB (Mulai Berkembang)";
+        break;
+      case "BSH":
+        label = "BSH (Berkembang Sesuai Harapan)";
+        break;
+      case "BSB":
+        label = "BSB (Berkembang Sangat Baik)";
+        break;
+      default:
+        label = item.statusUtama;
+    }
+
+    // 🔥 BULAN TERBARU → DETAIL
+    if (isCurrentMonth) {
+      return LineTooltipItem(
+        "${namaBulan[item.bulan]} ${item.tahun}\n$label",
+        const TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w600,
           fontSize: 12,
         ),
+      );
+    }
+
+    // 🔥 BULAN LAIN → SIMPLE
+    return LineTooltipItem(
+      item.statusUtama,
+      const TextStyle(
+        color: Colors.black,
+        fontWeight: FontWeight.bold,
       ),
-    ],
+        );
+      }).toList();
+    },
+  ),
+),
+
+        // 🔥 LINE
+        lineBarsData: [
+          LineChartBarData(
+            spots: data.map((e) {
+              return FlSpot(
+                (e.bulan - 1).toDouble(),
+                convertNilai(e.statusUtama),
+              );
+            }).toList(),
+
+            isCurved: true,
+            color: const Color(0xFFE58A45),
+            barWidth: 3,
+
+            // 🔥 DOT (biar enak di tap)
+            dotData: FlDotData(
+  show: true,
+  checkToShowDot: (spot, barData) => true, // 🔥 WAJIB
+  getDotPainter: (spot, percent, bar, index) {
+    return FlDotCirclePainter(
+      radius: 5,
+      color: const Color(0xFFE58A45),
+      strokeWidth: 2,
+      strokeColor: Colors.white,
+    );
+  },
+),
+
+            // 🔥 AREA
+            belowBarData: BarAreaData(
+              show: true,
+              color: const Color(0xFFE58A45).withOpacity(0.15),
+            ),
+          ),
+        ],
+      ),
+    ),
   );
 }
 

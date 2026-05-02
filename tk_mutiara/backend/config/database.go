@@ -13,6 +13,7 @@ var DB *sql.DB
 // InitDB menginisialisasi koneksi database
 func InitDB(config *Config) error {
 	var err error
+	
 	DB, err = sql.Open("mysql", config.GetDSN())
 	if err != nil {
 		return fmt.Errorf("gagal membuka database: %w", err)

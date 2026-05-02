@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../theme/app_theme.dart';
 import '../models/perkembangan_model.dart';
 import '../services/api_services.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class PerkembanganScreen extends StatefulWidget {
   final VoidCallback? onBackPressed;
@@ -173,12 +174,17 @@ class _PerkembanganScreenState extends State<PerkembanganScreen> {
             _buildHeader(context),
             _buildFilterSection(),
             Expanded(
-              child: ListView.builder(
-                padding: const EdgeInsets.all(16),
-                itemCount: _filteredData.length,
-                itemBuilder: (context, index) => _buildPerkembanganCard(_filteredData[index]),
-              ),
-            ),
+  child: ListView(
+    padding: const EdgeInsets.all(16),
+    children: [
+      _buildChartPerkembangan(), // 
+
+      const SizedBox(height: 16),
+
+      ..._filteredData.map((e) => _buildPerkembanganCard(e)).toList(),
+    ],
+  ),
+),
           ],
         ),
       ),
@@ -380,6 +386,168 @@ class _PerkembanganScreenState extends State<PerkembanganScreen> {
     );
   }
 
+  Widget _buildChartPerkembangan() {
+  if (_filteredData.isEmpty) {
+    return const SizedBox(
+      height: 140,
+      child: Center(child: Text("Belum ada data")),
+    );
+  }
+
+  double convertNilai(String status) {
+    switch (status) {
+      case "BB":
+        return 1;
+      case "MB":
+        return 2;
+      case "BSH":
+        return 3;
+      case "BSB":
+        return 4;
+      default:
+        return 1;
+    }
+  }
+
+  return Container(
+    padding: const EdgeInsets.all(12),
+    margin: const EdgeInsets.only(bottom: 16),
+    decoration: BoxDecoration(
+      color: const Color(0xFFFFF7F2), // 🔥 sama kayak dashboard
+      borderRadius: BorderRadius.circular(16),
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Grafik Perkembangan",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 6),
+        const Text(
+          "Ringkasan perkembangan bulan terpilih",
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey,
+          ),
+        ),
+        const SizedBox(height: 12),
+
+        SizedBox(
+          height: 140,
+          child: LineChart(
+            LineChartData(
+              minY: 1,
+              maxY: 4,
+
+              gridData: FlGridData(
+                show: true,
+                drawVerticalLine: false,
+                horizontalInterval: 1,
+                getDrawingHorizontalLine: (value) {
+                  return FlLine(
+                    color: Colors.orange.withOpacity(0.08),
+                    strokeWidth: 1,
+                  );
+                },
+              ),
+
+              borderData: FlBorderData(show: false),
+
+              titlesData: FlTitlesData(
+                topTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                rightTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+
+                leftTitles: AxisTitles(
+                  sideTitles: SideTitles(
+                    showTitles: true,
+                    reservedSize: 24,
+                    interval: 1,
+                    getTitlesWidget: (value, meta) {
+                      switch (value.toInt()) {
+                        case 1:
+                          return const Text("BB", style: TextStyle(fontSize: 9));
+                        case 2:
+                          return const Text("MB", style: TextStyle(fontSize: 9));
+                        case 3:
+                          return const Text("BSH", style: TextStyle(fontSize: 9));
+                        case 4:
+                          return const Text("BSB", style: TextStyle(fontSize: 9));
+                      }
+                      return const Text("");
+                    },
+                  ),
+                ),
+
+                bottomTitles: AxisTitles(
+                  sideTitles: SideTitles(showTitles: false), // 🔥 sama dashboard
+                ),
+              ),
+
+              lineTouchData: LineTouchData(
+                handleBuiltInTouches: true,
+                touchTooltipData: LineTouchTooltipData(
+                  tooltipRoundedRadius: 8,
+                  getTooltipItems: (spots) {
+                    return spots.map((spot) {
+                      return LineTooltipItem(
+                        spot.y.toInt().toString(),
+                        const TextStyle(fontWeight: FontWeight.bold),
+                      );
+                    }).toList();
+                  },
+                ),
+              ),
+
+              lineBarsData: [
+                LineChartBarData(
+                  spots: _filteredData.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    var data = entry.value;
+
+                    return FlSpot(
+                      index.toDouble(),
+                      convertNilai(data.statusUtama),
+                    );
+                  }).toList(),
+
+                  isCurved: true,
+                  color: const Color(0xFFE58A45), // 🔥 sama dashboard
+                  barWidth: 3,
+
+                  dotData: FlDotData(
+                    show: true,
+                    getDotPainter: (spot, percent, bar, index) {
+                      return FlDotCirclePainter(
+                        radius: 3.5,
+                        color: const Color(0xFFE58A45),
+                        strokeWidth: 2,
+                        strokeColor: Colors.white,
+                      );
+                    },
+                  ),
+
+                  belowBarData: BarAreaData(
+                    show: true,
+                    color: const Color(0xFFE58A45).withOpacity(0.12),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+  
   Widget _buildPerkembanganCard(PerkembanganModel data) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -796,3 +964,4 @@ class _PerkembanganScreenState extends State<PerkembanganScreen> {
     return years;
   }
 }
+
